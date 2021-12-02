@@ -56,7 +56,7 @@ public class UserController {
     @PostMapping(path = "/register")
     public ResponseEntity<String> registerNewUser(@RequestBody UserRegisterDTO user){
         try {
-            User userToSave = new User(user.getName(), user.getDateOfBirth(), user.getEmail(), user.getNickname(), user.getPassword(), 0.0f, 0.0f);
+            User userToSave = new User(user.getName(), user.getDateOfBirth(), user.getEmail(), user.getNickName(), user.getPassword(), 0.0f, 0.0f);
             userService.addNewUser(userToSave);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Email o nickName repetido");

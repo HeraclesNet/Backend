@@ -11,6 +11,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @CrossOrigin(origins = "*", methods= {RequestMethod.GET,RequestMethod.POST})
 @Service
 public class UserService {
@@ -28,7 +31,8 @@ public class UserService {
     
 
 
-    public List<User> getUsers(){
+    public List<User> getUsers() {
+        log.info("Getting all users");
         return userRepository.findAll();
     }
 
@@ -45,15 +49,15 @@ public class UserService {
     }
 
     public void addNewUser(User user) throws Exception {
-        user.setId(UUID.randomUUID().toString());
         Optional<User> userOptional = userRepository.findUserByEmail(user.getEmail());
-        if(userOptional.isPresent()){
+        if (userOptional.isPresent()) {
+            log.error("User already exists");
             throw new Exception("BadRequest");
         }
         userOptional = userRepository.findUserByNickName(user.getNickName());
-        if(userOptional.isPresent()){
+        if (userOptional.isPresent()) {
+            log.error("NickName already exists {}", user.getNickName());
             throw new Exception("BadRequest");
-
         }
         String encodedPassword = this.passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
