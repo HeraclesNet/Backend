@@ -12,61 +12,27 @@ import java.util.UUID;
 
 @Data
 @Entity(name = "User")
-@Table(
-	name = "users",
-	uniqueConstraints = {
+@Table(name = "users", uniqueConstraints = {
 		@UniqueConstraint(name = "user_email_unique", columnNames = "email"),
 		@UniqueConstraint(name = "user_nick_name_unique", columnNames = "nick_name")
-	}
-)
+})
 public class User {
 	@Id
-	@Column(
-		name = "id",
-		unique = true,
-		nullable = false
-	)
+	@Column(name = "id", unique = true, nullable = false)
 	private String id;
-	@Column(
-		name = "name",
-		nullable = false,
-		updatable = false,
-		columnDefinition = "TEXT"
-	)
+	@Column(name = "name", nullable = false, updatable = false, columnDefinition = "TEXT")
 	private String name; // Se debe ingresar primero los nombre y continuo los apellidos
-	@Column(
-		name = "data_of_birth",
-		updatable = false,
-		nullable = false
-	)
+	@Column(name = "data_of_birth", updatable = false, nullable = false)
 	private LocalDate dateOfBirth;
-	@Column(
-		name = "email",
-		nullable = false
-	)
+	@Column(name = "email", nullable = false)
 	private String email;
-	@Column(
-		name = "nick_name",
-		nullable = false
-	)
+	@Column(name = "nick_name", nullable = false)
 	private String nickName;
-	@Column(
-		name = "password",
-		nullable = false,
-		columnDefinition = "TEXT"
-	)
+	@Column(name = "password", nullable = false, columnDefinition = "TEXT")
 	private String password;
-	@Column(
-		name = "weight",
-		precision = 3,
-		updatable = true
-	)
+	@Column(name = "weight", precision = 3, updatable = true)
 	private float weight;
-	@Column(
-		name = "height",
-		precision = 3,
-		updatable = true
-	)
+	@Column(name = "height", precision = 3, updatable = true)
 	private float height;
 
 	public User() {

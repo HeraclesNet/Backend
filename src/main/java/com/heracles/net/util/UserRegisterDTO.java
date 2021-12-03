@@ -1,5 +1,4 @@
-package com.heracles.net.dto;
-
+package com.heracles.net.util;
 
 import java.time.LocalDate;
 
