@@ -16,27 +16,27 @@ public class UserConfig {
 
     @Bean
     CommandLineRunner commandLineRunner(
-            UserRepository repository) {
-        return args -> {
-            User nel = new User(
-                    "nombre",
-                    LocalDate.of(2000, Month.APRIL, 20),
-                    "algo@algo",
-                    "tim",
-                    "noes1",
-                    (float) 23.2,
-                    (float) 12.3);
+                    UserRepository repository) {
+            return args -> {
+                    User nel = new User(
+                                    "nombre",
+                                    LocalDate.of(2000, Month.APRIL, 20),
+                                    "algo@algo",
+                                    "tim",
+                                    "noes1",
+                                    (float) 23.2,
+                                    (float) 12.3);
 
-            User pepito = new User(
-                    "nombre2",
-                    LocalDate.of(2000, Month.APRIL, 20),
-                    "algo@algo2",
-                    "tim2",
-                    "noes2",
-                    (float) 23.2,
-                    (float) 12.3);
-            repository.saveAll(
-                    List.of(nel, pepito));
-        };
+                    User pepito = new User(
+                                    "nombre2",
+                                    LocalDate.of(2000, Month.APRIL, 20),
+                                    "algo@algo2",
+                                    "tim2",
+                                    "noes2",
+                                    (float) 23.2,
+                                    (float) 12.3);
+                    repository.saveAll(
+                                    List.of(nel, pepito));
+            };
     }
 }

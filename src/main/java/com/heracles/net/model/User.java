@@ -17,6 +17,7 @@ import java.util.UUID;
 		@UniqueConstraint(name = "user_nick_name_unique", columnNames = "nick_name")
 })
 public class User {
+	
 	@Id
 	@Column(name = "id", unique = true, nullable = false)
 	private String id;
