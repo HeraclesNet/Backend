@@ -16,13 +16,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import lombok.extern.slf4j.Slf4j;
+
 import com.heracles.net.service.FileStorageService;
 import com.heracles.net.message.ResponseFile;
 import com.heracles.net.message.ResponseMessage;
 import com.heracles.net.model.FileDB;
 
 @Controller
-@CrossOrigin("http://localhost:8081")
+@CrossOrigin("http://localhost:8082")
+@Slf4j
 public class FileController {
 
   @Autowired
@@ -30,7 +33,9 @@ public class FileController {
 
   @PostMapping("/upload")
   public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("file") MultipartFile file) {
+    log.info("llega");
     String message = "";
+
     try {
       storageService.store(file);
 
