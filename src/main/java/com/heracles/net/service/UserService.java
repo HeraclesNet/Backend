@@ -83,4 +83,23 @@ public class UserService implements UserDetailsService, UserInterfaceService {
     public User findUserByEmail(String email) throws UsernameNotFoundException {
         return userRepository.findUserByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
+
+    @Override
+    public void EditUserExtraData(String email,String key, String value) throws Exception{
+        User user = userRepository.findUserByEmail(email).get();
+        if(key.equals("Height")){
+            user.setHeight(Float.parseFloat(value));
+        }
+        if(key.equals("Weight")){
+            user.setWeight(Float.parseFloat(value));
+        }
+        if(key.equals("Gender")){
+            user.setGender(Boolean.parseBoolean(value));
+        }
+        userRepository.save(user);
+    }
+
+    @Override
+    public void EditUserImportantData() throws Exception{
+    }
 }

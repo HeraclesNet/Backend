@@ -34,12 +34,16 @@ public class User {
 	private float weight;
 	@Column(name = "height", precision = 3, updatable = true)
 	private float height;
+	@Column(name = "gender", nullable = true, updatable = true)
+	private boolean gender;
+	@Column(name = "visibility",nullable = false)
+	private boolean visibility;
 
 	public User() {
 	}
 
 	public User(String name, LocalDate dateOfBirth, String email, String nickName, String password,
-			float weight, float height) {
+			float weight, float height, boolean gender) {
 		this.id = UUID.randomUUID().toString();
 		this.name = name;
 		this.dateOfBirth = dateOfBirth;
@@ -48,5 +52,6 @@ public class User {
 		this.password = password;
 		this.weight = weight;
 		this.height = height;
+		this.gender = gender;
 	}
 }

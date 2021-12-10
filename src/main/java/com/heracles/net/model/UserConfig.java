@@ -25,7 +25,8 @@ public class UserConfig {
                     "tim",
                     "noes1",
                     (float) 23.2,
-                    (float) 12.3);
+                    (float) 12.3,
+                    false);
 
             User pepito = new User(
                     "nombre2",
@@ -34,7 +35,8 @@ public class UserConfig {
                     "tim2",
                     "noes2",
                     (float) 23.2,
-                    (float) 12.3);
+                    (float) 12.3,
+                    false);
             repository.saveAll(
                     List.of(nel, pepito));
         };

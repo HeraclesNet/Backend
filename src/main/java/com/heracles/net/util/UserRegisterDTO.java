@@ -10,6 +10,5 @@ public class UserRegisterDTO {
 	private String email;
 	private String password;
 	private String nickName;
-	private char gender;
 	private LocalDate dateOfBirth;
 }

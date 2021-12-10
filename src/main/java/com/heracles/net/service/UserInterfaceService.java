@@ -15,4 +15,8 @@ public interface UserInterfaceService {
 	public List<User> getUsers();
 
 	public User findUserByEmail(String email) throws UsernameNotFoundException;
+
+	public void EditUserExtraData(String email,String key,String value) throws Exception;
+
+	public void EditUserImportantData() throws Exception;
 }

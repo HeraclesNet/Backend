@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication(exclude = SecurityAutoConfiguration.class)
 @EnableJpaRepositories(basePackages = "com.heracles.net.repository")
-public class HeraclesNetApplication {
+public class HeraclesNetApplication{
 	public static void main(String[] args) {
 		SpringApplication.run(HeraclesNetApplication.class, args);
 	}

@@ -15,26 +15,29 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestMethod;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*", methods = { RequestMethod.GET, RequestMethod.POST })
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	private final UserDetailsService userDetailsService;
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.csrf().disable();
-		http.cors().disable();
-		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+		http.authorizeRequests().antMatchers("/login","/home/**").permitAll().antMatchers("/users/**").hasAuthority("ROLE_USER").anyRequest().authenticated().and()
+		.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().csrf().disable().addFilterBefore(new CustomAuthorization(), UsernamePasswordAuthenticationFilter.class)
+		.addFilter(new CustomAuthentication(authenticationManagerBean()));
+/* 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		http.authorizeRequests().antMatchers("/login", "/home/**").permitAll();
 		http.authorizeRequests().antMatchers("/user/**").hasAuthority("ROLE_USER");
 		http.authorizeRequests().anyRequest().authenticated();
 		http.addFilter(new CustomAuthentication(authenticationManagerBean()));
-		http.addFilterBefore(new CustomAuthorization(), UsernamePasswordAuthenticationFilter.class);
+		http.addFilterBefore(new CustomAuthorization(),UsernamePasswordAuthenticationFilter.class); */
 	}
 
 	@Override
