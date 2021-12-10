@@ -4,7 +4,7 @@ import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+//import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.Data;
 
@@ -17,7 +17,6 @@ public class Rutina {
     @Column(name = "id", unique = true, nullable = false)
     private String id;
     @Column(name = "userId",nullable = false)
-    @OneToMany
     private String userId;
     @Column(name = "dayOfWeek")
     private String dayOfWeek;
