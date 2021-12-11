@@ -20,27 +20,29 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import lombok.AllArgsConstructor;
-//import lombok.extern.slf4j.Slf4j;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @CrossOrigin(origins = "*", methods = { RequestMethod.GET, RequestMethod.POST })
 @RequestMapping(path = "/home")
 @AllArgsConstructor
-//@Slf4j
+@Slf4j
 public class HomeController {
 
     private UserService userService;
 
     @GetMapping(path = "/users")
     public ResponseEntity<List<User>> getUsers() {
+        log.info("All users requested");
         return ResponseEntity.ok().body(userService.getUsers());
     }
 
     @PostMapping(path = "/register")
     public ResponseEntity<String> registerNewUser(@RequestBody UserRegisterDTO user) {
+        log.info("New user requested");
         try {
             User userToSave = new User(user.getName(), user.getDateOfBirth(), user.getEmail(), user.getNickName(),
-                    user.getPassword(), 0.0f, 0.0f,false);
+                    user.getPassword(), 0.0f, 0.0f,false, true);
             userService.addNewUser(userToSave);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Email o nickName repetido");
@@ -50,7 +52,8 @@ public class HomeController {
     }
 
     @PostMapping(path = "/update")
-    public ResponseEntity<String> UpdateUser(@RequestBody UserUpdateDTO user){
+    public ResponseEntity<String> UpdateUser(@RequestBody UserUpdateDTO user) {
+        log.info("Update user requested");
         try{
         userService.EditUserExtraData(user.getEmail(), user.getKey(), user.getValue());
         } catch(Exception e){

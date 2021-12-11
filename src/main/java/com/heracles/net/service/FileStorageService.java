@@ -18,14 +18,18 @@ public class FileStorageService {
   private FileDBRepository fileDBRepository;
 
   public FileDB store(MultipartFile file) throws IOException {
-    String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-    FileDB FileDB = new FileDB(fileName, file.getContentType(), file.getBytes());
+    String origianlName = file.getOriginalFilename();
+    if (origianlName == null) {
+      throw new IOException("File name is empty");
+    }
+    String fileName = StringUtils.cleanPath(origianlName);
+    FileDB fileDB = new FileDB(fileName, file.getContentType(), file.getBytes());
 
-    return fileDBRepository.save(FileDB);
+    return fileDBRepository.save(fileDB);
   }
 
   public FileDB getFile(String id) {
-    return fileDBRepository.findById(id).get();
+    return fileDBRepository.findById(id).orElseThrow(() -> new RuntimeException("File not found with id " + id));
   }
   
   public Stream<FileDB> getAllFiles() {

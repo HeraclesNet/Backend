@@ -2,23 +2,30 @@ package com.heracles.net.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+
+import org.hibernate.annotations.GenericGenerator;
+
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
 @Data
 @Entity(name = "User")
-@Table(name = "users", uniqueConstraints = {
+@Table(name = "users", schema = "public", uniqueConstraints = {
 		@UniqueConstraint(name = "user_email_unique", columnNames = "email"),
 		@UniqueConstraint(name = "user_nick_name_unique", columnNames = "nick_name")
 })
+@NoArgsConstructor
 public class User {
 	
 	@Id
+	@GeneratedValue(generator = "uuid")
+	@GenericGenerator(name = "uuid", strategy = "uuid2")
 	@Column(name = "id", unique = true, nullable = false)
 	private String id;
 	@Column(name = "name", nullable = false, updatable = false, columnDefinition = "TEXT")
@@ -40,12 +47,8 @@ public class User {
 	@Column(name = "visibility",nullable = false)
 	private boolean visibility;
 
-	public User() {
-	}
-
 	public User(String name, LocalDate dateOfBirth, String email, String nickName, String password,
-			float weight, float height, boolean gender) {
-		this.id = UUID.randomUUID().toString();
+			float weight, float height, boolean gender, boolean visibility) {
 		this.name = name;
 		this.dateOfBirth = dateOfBirth;
 		this.email = email;
@@ -54,5 +57,6 @@ public class User {
 		this.weight = weight;
 		this.height = height;
 		this.gender = gender;
+		this.visibility = visibility;
 	}
 }

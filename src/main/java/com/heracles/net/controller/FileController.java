@@ -8,7 +8,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,9 +22,8 @@ import com.heracles.net.message.ResponseFile;
 import com.heracles.net.message.ResponseMessage;
 import com.heracles.net.model.FileDB;
 
-@Controller
-@CrossOrigin("http://localhost:8082")
 @Slf4j
+@Controller
 public class FileController {
 
   @Autowired
@@ -33,7 +31,7 @@ public class FileController {
 
   @PostMapping("/upload")
   public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("file") MultipartFile file) {
-    log.info("llega");
+    log.info("Uploading file: {}", file.getOriginalFilename());
     String message = "";
 
     try {
@@ -49,6 +47,7 @@ public class FileController {
 
   @GetMapping("/files")
   public ResponseEntity<List<ResponseFile>> getListFiles() {
+    log.info("Getting list of files");
     List<ResponseFile> files = storageService.getAllFiles().map(dbFile -> {
       String fileDownloadUri = ServletUriComponentsBuilder
           .fromCurrentContextPath()
@@ -62,14 +61,13 @@ public class FileController {
           dbFile.getType(),
           dbFile.getData().length);
     }).collect(Collectors.toList());
-
     return ResponseEntity.status(HttpStatus.OK).body(files);
   }
 
   @GetMapping("/files/{id}")
   public ResponseEntity<byte[]> getFile(@PathVariable String id) {
+    log.info("Getting file: {}", id);
     FileDB fileDB = storageService.getFile(id);
-
     return ResponseEntity.ok()
         .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileDB.getName() + "\"")
         .body(fileDB.getData());

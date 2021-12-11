@@ -47,6 +47,7 @@ public class UserController {
 
     @GetMapping(value = "/token")
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        log.info("Refreshing token");
         String authHeader = request.getHeader(AUTHORIZATION);
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String refreshToken = authHeader.substring(7);
