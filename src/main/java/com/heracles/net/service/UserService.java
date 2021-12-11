@@ -97,7 +97,14 @@ public class UserService implements UserDetailsService, UserInterfaceService {
     @Override
     public ResponseMessage addPost(String email, String content, int muscles, MultipartFile file) throws UsernameNotFoundException, IOException{
         User user = userRepository.findUserByEmail(email).orElseThrow();
-        user.addPost(new AppPost(content, muscles, user, file));
-        return new ResponseMessage("Uploaded the file successfully: " + file.getOriginalFilename());
+        ResponseMessage responseMessage = new ResponseMessage();
+        if (file == null) {
+            user.addPost(new AppPost(content, muscles, user));
+            responseMessage.setMessage("Post successfuly added");
+        } else {
+            user.addPost(new AppPost(content, muscles, user, file));
+            responseMessage.setMessage("Post successfuly added with file:" + file.getOriginalFilename());
+        }
+        return responseMessage;
     }
 }

@@ -58,4 +58,10 @@ public class AppPost {
 		this.user = user;
 		files.add(new FileDB(file, this));
 	}
+
+	public AppPost(String content, int muscles, User user) {
+		this.content = content;
+		this.muscles = muscles;
+		this.user = user;
+	}
 }

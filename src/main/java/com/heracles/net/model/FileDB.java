@@ -13,6 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.Data;
@@ -51,7 +52,9 @@ public class FileDB {
   }
 
   public FileDB(MultipartFile file, AppPost post) throws IOException {
-    this.name = file.getOriginalFilename();
+    String temp = file.getOriginalFilename();
+    if (temp != null)
+      this.name = StringUtils.cleanPath(temp);
     this.type = file.getContentType();
     this.data = file.getBytes();
     this.post = post;
