@@ -1,26 +1,29 @@
 
 package com.heracles.net.service;
 
+import java.io.IOException;
 import java.util.*;
+
+import com.heracles.net.message.ResponseMessage;
 import com.heracles.net.model.*;
 import com.heracles.net.repository.*;
 import com.heracles.net.util.CustomUserDetails;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@CrossOrigin(origins = "*", methods = { RequestMethod.GET, RequestMethod.POST })
 @Service
+@Transactional
 public class UserService implements UserDetailsService, UserInterfaceService {
 
     private final UserRepository userRepository;
@@ -37,19 +40,6 @@ public class UserService implements UserDetailsService, UserInterfaceService {
     public List<User> getUsers() {
         log.info("Getting all users");
         return userRepository.findAll();
-    }
-
-    @Override
-    public User getUserLogin(String email, String password) throws Exception {
-        Optional<User> userOptional = userRepository.findUserByEmail(email);
-        if (!userOptional.isPresent()) {
-            throw new Exception("Not found");
-        }
-        User user = userOptional.get();
-        if (!user.getPassword().equals(password)) {
-            throw new Exception("Wrong Password");
-        }
-        return user;
     }
 
     @Override
@@ -85,21 +75,29 @@ public class UserService implements UserDetailsService, UserInterfaceService {
     }
 
     @Override
-    public void EditUserExtraData(String email,String key, String value) throws Exception{
-        User user = userRepository.findUserByEmail(email).get();
-        if(key.equals("Height")){
+    public void EditUserExtraData(String email, String key, String value) throws Exception {
+        User user = userRepository.findUserByEmail(email).orElseThrow();
+        if (key.equals("Height")) {
             user.setHeight(Float.parseFloat(value));
         }
-        if(key.equals("Weight")){
+        if (key.equals("Weight")) {
             user.setWeight(Float.parseFloat(value));
         }
-        if(key.equals("Gender")){
+        if (key.equals("Gender")) {
             user.setGender(Boolean.parseBoolean(value));
         }
         userRepository.save(user);
     }
 
     @Override
-    public void EditUserImportantData() throws Exception{
+    public void EditUserImportantData() throws Exception {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public ResponseMessage addPost(String email, String content, int muscles, MultipartFile file) throws UsernameNotFoundException, IOException{
+        User user = userRepository.findUserByEmail(email).orElseThrow();
+        user.addPost(new AppPost(content, muscles, user, file));
+        return new ResponseMessage("Uploaded the file successfully: " + file.getOriginalFilename());
     }
 }

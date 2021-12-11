@@ -3,46 +3,70 @@ package com.heracles.net.api;
 import static com.heracles.net.util.JwtUtil.verifier;
 import static com.heracles.net.util.JwtUtil.generateToken;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.http.HttpStatus.EXPECTATION_FAILED;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.heracles.net.message.ResponseMessage;
 import com.heracles.net.model.User;
 import com.heracles.net.service.*;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.support.StandardMultipartHttpServletRequest;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
 @Slf4j
+@Transactional
 @RestController
+@AllArgsConstructor
 @RequestMapping(path = "/user")
 public class UserController {
 
     private final UserService userService;
 
-    @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
-
     @GetMapping(value = "/home")
     public String homePage() {
         return "<h1>Welcome to the Heracles Network API</h1>";
+    }
+
+    @PostMapping(value = "/media/upload", consumes = MULTIPART_FORM_DATA_VALUE, produces = APPLICATION_JSON_VALUE)
+    public void uploadMedia(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        String token = request.getHeader(AUTHORIZATION);
+        DecodedJWT decodedJWT = verifier(token.substring(7));
+        String email = decodedJWT.getSubject();
+        response.setContentType(APPLICATION_JSON_VALUE);
+        try {
+            log.info("Posting contento for user {}", email);
+            MultipartFile file = ((StandardMultipartHttpServletRequest) request).getFile("file");
+            ResponseMessage responseMessage = userService.addPost(email, request.getParameter("content"),
+                    Integer.parseInt(request.getParameter("muscles")), file);
+            response.setStatus(HttpStatus.OK.value());
+            response.getWriter().write(new ObjectMapper().writeValueAsString(responseMessage));
+        } catch (Exception e) {
+            response.setStatus(EXPECTATION_FAILED.value());
+            response.getWriter().write(new ObjectMapper().writeValueAsString(new ResponseMessage(e.getMessage())));
+        }
     }
 
     @GetMapping(value = "/token")

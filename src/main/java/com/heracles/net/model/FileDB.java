@@ -1,13 +1,19 @@
 package com.heracles.net.model;
 
+import java.io.IOException;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.web.multipart.MultipartFile;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,7 +26,7 @@ public class FileDB {
 
   @Id
   @GeneratedValue(generator = "uuid")
-  @GenericGenerator(name = "uuid", strategy = "uui2")
+  @GenericGenerator(name = "uuid", strategy = "uuid2")
   @Column(name = "id", nullable = false, unique = true)
   private String id;
 
@@ -34,10 +40,21 @@ public class FileDB {
   @Column(name = "content", nullable = false)
   private byte[] data;
 
+  @ManyToOne
+  @JoinColumn(referencedColumnName = "id", nullable = false, updatable = false, foreignKey = @ForeignKey(name = "fk_post_id"))
+  private AppPost post;
+
   public FileDB(String name, String type, byte[] data) {
     this.name = name;
     this.type = type;
     this.data = data;
+  }
+
+  public FileDB(MultipartFile file, AppPost post) throws IOException {
+    this.name = file.getOriginalFilename();
+    this.type = file.getContentType();
+    this.data = file.getBytes();
+    this.post = post;
   }
 
 }
