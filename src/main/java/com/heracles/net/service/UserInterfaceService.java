@@ -21,5 +21,5 @@ public interface UserInterfaceService {
 
 	public void EditUserImportantData() throws Exception;
 
-	public ResponseMessage addPost(String email, String content, int muscles, MultipartFile file) throws UsernameNotFoundException, IOException;
+	public ResponseMessage addPost(String email, String content, MultipartFile file) throws UsernameNotFoundException, IOException;
 }

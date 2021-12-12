@@ -56,7 +56,6 @@ public class UserService implements UserDetailsService, UserInterfaceService {
         }
         String encodedPassword = this.passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
-        userRepository.save(user);
     }
 
     @Override
@@ -95,14 +94,14 @@ public class UserService implements UserDetailsService, UserInterfaceService {
     }
 
     @Override
-    public ResponseMessage addPost(String email, String content, int muscles, MultipartFile file) throws UsernameNotFoundException, IOException{
+    public ResponseMessage addPost(String email, String content, MultipartFile file) throws UsernameNotFoundException, IOException{
         User user = userRepository.findUserByEmail(email).orElseThrow();
         ResponseMessage responseMessage = new ResponseMessage();
         if (file == null) {
-            user.addPost(new AppPost(content, muscles, user));
+            user.addPost(new AppPost(content, user));
             responseMessage.setMessage("Post successfuly added");
         } else {
-            user.addPost(new AppPost(content, muscles, user, file));
+            user.addPost(new AppPost(content, user, file));
             responseMessage.setMessage("Post successfuly added with file:" + file.getOriginalFilename());
         }
         return responseMessage;

@@ -38,11 +38,12 @@ public class AppPost {
 	@Column(name = "content", columnDefinition = "TEXT")
 	private String content;
 
-	@Column(name = "muscles")
+	@Column(name = "muscles", columnDefinition = "INTEGER DEFAULT 0")
 	private int muscles;
 
 	@ManyToOne
-	@JoinColumn(referencedColumnName = "id", nullable = false, updatable = false, foreignKey = @ForeignKey(name = "fk_user_id"))
+	@JsonIgnore
+	@JoinColumn( referencedColumnName = "id", nullable = false, updatable = false, foreignKey = @ForeignKey(name = "fk_user_id"))
 	private User user;
 
 	@Column(name = "created_at", columnDefinition = "TIMESTAMP")
@@ -52,16 +53,16 @@ public class AppPost {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "post", targetEntity = FileDB.class)
 	private List<FileDB> files = new LinkedList<>();
 
-	public AppPost(String content, int muscles, User user, MultipartFile file) throws IOException {
+	public AppPost(String content, User user, MultipartFile file) throws IOException {
 		this.content = content;
-		this.muscles = muscles;
 		this.user = user;
+		this.createdAt = LocalDate.now();
 		files.add(new FileDB(file, this));
 	}
 
-	public AppPost(String content, int muscles, User user) {
+	public AppPost(String content, User user) {
 		this.content = content;
-		this.muscles = muscles;
 		this.user = user;
+		this.createdAt = LocalDate.now();
 	}
 }

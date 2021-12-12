@@ -1,6 +1,10 @@
 package com.heracles.net.util;
 
-import org.springframework.web.multipart.MultipartFile;
+import java.util.List;
+
+import com.heracles.net.message.ResponseFile;
+import com.heracles.net.model.AppPost;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,16 +14,24 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PostDTO {
-	private String content;
+	private String id;
+	private String post;
 	private int muscles;
-	private MultipartFile file;
+	private List<ResponseFile> files;
+
+	public PostDTO(AppPost post) {
+		this.id = post.getId();
+		this.post = post.getContent();
+		this.muscles = post.getMuscles();
+		this.files = post.getFiles().stream().map(ResponseFile::new).collect(java.util.stream.Collectors.toList());
+	}
 
 	@Override
 	public String toString() {
 		return "{" +
-			" content= '" + getContent() + "'" +
+			" content= '" + getPost() + "'" +
 			", muscles= '" + getMuscles() + "'" +
-			", file= '" + getFile().getOriginalFilename() + "'" +
+			", files= '" + getFiles().size() + "'" +
 			"}";
 	}
 

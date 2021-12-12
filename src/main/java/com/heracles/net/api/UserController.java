@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.heracles.net.message.ResponseMessage;
 import com.heracles.net.model.User;
 import com.heracles.net.service.*;
+import com.heracles.net.util.PostDTO;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,6 +32,9 @@ import org.springframework.web.multipart.support.StandardMultipartHttpServletReq
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,27 +47,65 @@ import org.springframework.web.bind.annotation.PostMapping;
 @RequestMapping(path = "/user")
 public class UserController {
 
+    private static final String INVALID_TOKEN = "Invalid token";
+    private static final String NO_TOKEN_PROVIDED = "No token provided";
+
     private final UserService userService;
+    private final PostService postService;
 
     @GetMapping(value = "/home")
     public String homePage() {
         return "<h1>Welcome to the Heracles Network API</h1>";
     }
 
+    @GetMapping(value = "/posts", produces = APPLICATION_JSON_VALUE)
+    public void getPosts(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType(APPLICATION_JSON_VALUE);
+        String token = request.getHeader(AUTHORIZATION);
+        if (token == null) {
+            response.setStatus(FORBIDDEN.value());
+            response.getWriter().write(new ObjectMapper().writeValueAsString(new ResponseMessage(NO_TOKEN_PROVIDED)));
+            return;
+        }
+        DecodedJWT decodedJWT = verifier(token.substring(7));
+        if (decodedJWT == null) {
+            response.setStatus(EXPECTATION_FAILED.value());
+            response.getWriter().write(new ObjectMapper().writeValueAsString(new ResponseMessage(INVALID_TOKEN)));
+            return;
+        }
+        log.info("User {} is requesting posts", decodedJWT.getSubject());
+        Pageable page = PageRequest.of(request.getParameter("pageNumber") == null ? 0 : Integer.parseInt(request.getParameter("pageNumber")),
+                request.getParameter("pageSize") == null ? 10 : Integer.parseInt(request.getParameter("pageSize")));
+        Page<PostDTO> posts = postService.getPosts(page);
+        response.setStatus(HttpStatus.OK.value());
+        response.getWriter().write(new ObjectMapper().writeValueAsString(posts));
+    }
+
     @PostMapping(value = "/media/upload", consumes = MULTIPART_FORM_DATA_VALUE, produces = APPLICATION_JSON_VALUE)
     public void uploadMedia(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String token = request.getHeader(AUTHORIZATION);
+        if (token == null) {
+            response.setStatus(FORBIDDEN.value());
+            response.getWriter().write(new ObjectMapper().writeValueAsString(new ResponseMessage(NO_TOKEN_PROVIDED)));
+            return;
+        }
         DecodedJWT decodedJWT = verifier(token.substring(7));
+        if (decodedJWT == null) {
+            response.setStatus(EXPECTATION_FAILED.value());
+            response.getWriter().write(new ObjectMapper().writeValueAsString(new ResponseMessage(INVALID_TOKEN)));
+            return;
+        }
         String email = decodedJWT.getSubject();
         response.setContentType(APPLICATION_JSON_VALUE);
         try {
             log.info("Posting contento for user {}", email);
             MultipartFile file = ((StandardMultipartHttpServletRequest) request).getFile("file");
-            ResponseMessage responseMessage = userService.addPost(email, request.getParameter("content"),
-                    Integer.parseInt(request.getParameter("muscles")), file);
+            ResponseMessage responseMessage = userService.addPost(email, request.getParameter("content"), file);
             response.setStatus(HttpStatus.OK.value());
             response.getWriter().write(new ObjectMapper().writeValueAsString(responseMessage));
         } catch (Exception e) {
+            log.error("Error posting content {}", e.getMessage());
             response.setStatus(EXPECTATION_FAILED.value());
             response.getWriter().write(new ObjectMapper().writeValueAsString(new ResponseMessage(e.getMessage())));
         }
@@ -73,6 +115,7 @@ public class UserController {
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         log.info("Refreshing token");
         String authHeader = request.getHeader(AUTHORIZATION);
+        response.setContentType(APPLICATION_JSON_VALUE);
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String refreshToken = authHeader.substring(7);
             try {
@@ -83,7 +126,6 @@ public class UserController {
                 Map<String, String> tokens = new HashMap<>(2);
                 tokens.put("token", newToken);
                 tokens.put("refreshToken", refreshToken);
-                response.setContentType(APPLICATION_JSON_VALUE);
                 Map<String, String> map = new HashMap<>();
                 map.put("token", newToken);
                 map.put("refreshToken", refreshToken);
@@ -92,11 +134,13 @@ public class UserController {
                 log.error("Error while refreshing token", e);
                 response.setHeader("Error", e.getMessage());
                 response.setStatus(FORBIDDEN.value());
-                response.setContentType(APPLICATION_JSON_VALUE);
                 Map<String, String> map = new HashMap<>();
                 map.put("message", e.getMessage());
                 new ObjectMapper().writeValue(response.getOutputStream(), map);
             }
+        } else {
+            response.setStatus(FORBIDDEN.value());
+            response.getWriter().write(new ObjectMapper().writeValueAsString(new ResponseMessage(NO_TOKEN_PROVIDED)));
         }
     }
 
