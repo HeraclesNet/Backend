@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.heracles.net.util.CustomUserDetails;
+import com.heracles.net.util.UserLoginDTO;
+
 import static com.heracles.net.util.JwtUtil.generateToken;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -55,8 +57,10 @@ public class CustomAuthentication extends UsernamePasswordAuthenticationFilter {
 		String token = generateToken(user, new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 5));
 		String refreshToken = generateToken(user, new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24));
 		Map<String, String> tokens = new HashMap<>(2);
+		UserLoginDTO userData = new UserLoginDTO(userDetails.getUser());
 		tokens.put("token", token);
 		tokens.put("refreshToken", refreshToken);
+		tokens.put("userData", userData.toString());
 		response.setContentType(APPLICATION_JSON_VALUE);
 		new ObjectMapper().writeValue(response.getOutputStream() , tokens);
 	}

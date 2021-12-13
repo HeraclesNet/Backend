@@ -8,17 +8,21 @@ import com.heracles.net.model.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import lombok.Data;
 
+@Data
 public class CustomUserDetails implements UserDetails {
 
 	private static final long serialVersionUID = 1L;
 
 	private String email;
 	private String password;
+	private User user;
 
 	public CustomUserDetails(User user) {
 		this.email = user.getEmail();
 		this.password = user.getPassword();
+		this.user = user;
 	}
 
 	@Override
