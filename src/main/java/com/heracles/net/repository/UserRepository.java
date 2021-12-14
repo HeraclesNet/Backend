@@ -1,6 +1,6 @@
 package com.heracles.net.repository;
 
-import com.heracles.net.model.*;
+import com.heracles.net.model.User;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

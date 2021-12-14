@@ -17,6 +17,7 @@ public class PostDTO {
 	private String id;
 	private String post;
 	private int muscles;
+	private boolean hasFiles;
 	private List<ResponseFile> files;
 
 	public PostDTO(AppPost post) {
@@ -24,6 +25,7 @@ public class PostDTO {
 		this.post = post.getContent();
 		this.muscles = post.getMuscles();
 		this.files = post.getFiles().stream().map(ResponseFile::new).collect(java.util.stream.Collectors.toList());
+		this.hasFiles = !this.files.isEmpty();
 	}
 
 	@Override
@@ -32,6 +34,7 @@ public class PostDTO {
 			" content= '" + getPost() + "'" +
 			", muscles= '" + getMuscles() + "'" +
 			", files= '" + getFiles().size() + "'" +
+			", hasFiles= '" + isHasFiles() + "'" +
 			"}";
 	}
 
