@@ -1,4 +1,5 @@
 package com.heracles.net.util;
+
 import java.time.LocalDate;
 
 import com.heracles.net.model.User;

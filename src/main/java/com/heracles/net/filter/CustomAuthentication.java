@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.heracles.net.message.AuthMessage;
 import com.heracles.net.util.CustomUserDetails;
 import com.heracles.net.util.UserLoginDTO;
 
@@ -52,16 +54,13 @@ public class CustomAuthentication extends UsernamePasswordAuthenticationFilter {
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
 			Authentication authResult) throws IOException, ServletException {
 		log.info("Successful authentication");
+		response.setContentType(APPLICATION_JSON_VALUE);
 		CustomUserDetails userDetails = (CustomUserDetails) authResult.getPrincipal();
 		User user = new User(userDetails.getUsername(), userDetails.getPassword(), userDetails.getAuthorities());
 		String token = generateToken(user, new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 5));
 		String refreshToken = generateToken(user, new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24));
-		Map<String, String> tokens = new HashMap<>(2);
-		UserLoginDTO userData = new UserLoginDTO(userDetails.getUser());
-		tokens.put("token", token);
-		tokens.put("refreshToken", refreshToken);
-		tokens.put("userData", userData.toString());
-		response.setContentType(APPLICATION_JSON_VALUE);
-		new ObjectMapper().writeValue(response.getOutputStream() , tokens);
+		AuthMessage authMessage = new AuthMessage(token, refreshToken, new UserLoginDTO(userDetails.getUser()));
+		ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());	
+		response.getWriter().write(mapper.writeValueAsString(authMessage));
 	}
 }

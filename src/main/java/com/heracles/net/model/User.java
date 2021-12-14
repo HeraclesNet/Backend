@@ -7,6 +7,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -16,7 +17,7 @@ import java.util.UUID;
 		@UniqueConstraint(name = "user_email_unique", columnNames = "email"),
 		@UniqueConstraint(name = "user_nick_name_unique", columnNames = "nick_name")
 })
-public class User {
+public class User implements Serializable {
 	
 	@Id
 	@Column(name = "id", unique = true, nullable = false)
