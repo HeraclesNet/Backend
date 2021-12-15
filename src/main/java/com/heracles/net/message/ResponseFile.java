@@ -19,8 +19,7 @@ public class ResponseFile {
     public ResponseFile(FileDB fileDB) {
         String fileDownloadUri = ServletUriComponentsBuilder
           .fromCurrentContextPath()
-          .path("/files/")
-          .path(fileDB.getId())
+          .path("/home/files").queryParam("id",fileDB.getId())
           .toUriString();
         this.name = fileDB.getName();
         this.url = fileDownloadUri;

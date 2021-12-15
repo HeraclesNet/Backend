@@ -1,13 +1,22 @@
 package com.heracles.net.api;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URI;
 import java.util.List;
+import org.springframework.http.HttpHeaders;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.heracles.net.model.FileDB;
 import com.heracles.net.model.User;
+import com.heracles.net.service.FileStorageService;
 import com.heracles.net.service.UserService;
 import com.heracles.net.util.UserRegisterDTO;
 import com.heracles.net.util.UserUpdateDTO;
-
+import org.springframework.http.MediaType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +28,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 
 @Slf4j
 @RestController
@@ -57,5 +67,21 @@ public class HomeController {
             return ResponseEntity.badRequest().body("Los datos no se pudieron alterar");
         }
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("Alteraditos");
+    }
+
+    @Autowired
+    private FileStorageService storageService;
+  
+    @GetMapping(value = "/files", produces = MediaType.IMAGE_JPEG_VALUE)
+    public void getFile(HttpServletRequest request, HttpServletResponse response) throws JsonProcessingException, IOException {
+      String id = request.getParameter("id");
+      log.info("ZZZZZZZZZZZZZZZZZZZZZZZ");
+      FileDB fileDB = storageService.getFile(id);
+      response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileDB.getName() + "\"");
+      response.setContentType(MediaType.IMAGE_JPEG_VALUE);
+      response.setContentLength(fileDB.getData().length);
+      OutputStream filecosas = response.getOutputStream();
+      filecosas.write(fileDB.getData(),0,fileDB.getData().length);
+  /*     response.getWriter().write(new ObjectMapper().writeValueAsString(fileDB.getData())); */
     }
 }
