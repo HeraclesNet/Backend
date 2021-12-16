@@ -56,6 +56,7 @@ public class UserService implements UserDetailsService, UserInterfaceService {
         }
         String encodedPassword = this.passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
+        userRepository.save(user);
     }
 
     @Override

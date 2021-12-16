@@ -72,16 +72,15 @@ public class HomeController {
     @Autowired
     private FileStorageService storageService;
   
-    @GetMapping(value = "/files", produces = MediaType.IMAGE_JPEG_VALUE)
-    public void getFile(HttpServletRequest request, HttpServletResponse response) throws JsonProcessingException, IOException {
+    @GetMapping(value = "/files", produces = "image/*")
+    public void getFile(HttpServletRequest request, HttpServletResponse response) throws IOException {
       String id = request.getParameter("id");
-      log.info("ZZZZZZZZZZZZZZZZZZZZZZZ");
+      log.info("File requested with id: " + id);
       FileDB fileDB = storageService.getFile(id);
       response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileDB.getName() + "\"");
-      response.setContentType(MediaType.IMAGE_JPEG_VALUE);
+      response.setContentType("image/*");
       response.setContentLength(fileDB.getData().length);
-      OutputStream filecosas = response.getOutputStream();
-      filecosas.write(fileDB.getData(),0,fileDB.getData().length);
-  /*     response.getWriter().write(new ObjectMapper().writeValueAsString(fileDB.getData())); */
+      OutputStream os = response.getOutputStream();
+      os.write(fileDB.getData(),0,fileDB.getData().length);
     }
 }
