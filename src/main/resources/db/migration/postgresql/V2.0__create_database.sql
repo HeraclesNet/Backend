@@ -46,7 +46,7 @@ CREATE TABLE "public"."files" (
 	"name" character varying(255) NOT NULL,
 	"type" character varying(255) NOT NULL,
 	"post_id" character varying(255) NOT NULL,
-	"data" oid NOT NULL,
+	"content" oid NOT NULL,
 	CONSTRAINT "files_pkey" PRIMARY KEY ("id"),
 	CONSTRAINT "fk_post_id" FOREIGN KEY ("post_id") REFERENCES "posts" ("id")
 );
