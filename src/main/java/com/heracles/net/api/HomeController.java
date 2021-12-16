@@ -46,6 +46,7 @@ public class HomeController {
             return ResponseEntity.badRequest().body("Email o nickName repetido");
         }
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentRequest().path("/register").toUriString());
+        
         return ResponseEntity.created(uri).body("El usuario a sido agregado");
     }
 
