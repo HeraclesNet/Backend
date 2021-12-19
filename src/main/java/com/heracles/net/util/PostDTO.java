@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.heracles.net.message.ResponseFile;
 import com.heracles.net.model.AppPost;
-
+import com.heracles.net.model.FileDB;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,11 +20,11 @@ public class PostDTO {
 	private boolean hasFiles;
 	private List<ResponseFile> files;
 
-	public PostDTO(AppPost post) {
+	public PostDTO(AppPost post, List<FileDB> files) {
 		this.id = post.getId();
 		this.post = post.getContent();
 		this.muscles = post.getMuscles();
-		this.files = post.getFiles().stream().map(ResponseFile::new).collect(java.util.stream.Collectors.toList());
+		this.files = files.stream().map(ResponseFile::new).collect(java.util.stream.Collectors.toList());
 		this.hasFiles = !this.files.isEmpty();
 	}
 

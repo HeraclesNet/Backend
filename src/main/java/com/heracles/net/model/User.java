@@ -1,15 +1,11 @@
 package com.heracles.net.model;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -17,7 +13,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Data
 @Entity(name = "User")
@@ -61,10 +56,6 @@ public class User {
 	@Column(name = "visibility", nullable = false)
 	private boolean visibility;
 
-	@JsonIgnore
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "user", targetEntity = AppPost.class)
-	private List<AppPost> posts;
-
 	public User(String name, LocalDate dateOfBirth, String email, String nickName, String password,
 			float weight, float height, boolean gender, boolean visibility) {
 		this.name = name;
@@ -77,9 +68,4 @@ public class User {
 		this.gender = gender;
 		this.visibility = visibility;
 	}
-
-	public void addPost(AppPost appPost) {
-		this.posts.add(appPost);
-	}
-
 }

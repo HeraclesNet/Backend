@@ -101,9 +101,8 @@ public class UserController {
         try {
             log.info("Posting contento for user {}", email);
             MultipartFile file = ((StandardMultipartHttpServletRequest) request).getFile("file");
-            ResponseMessage responseMessage = userService.addPost(email, request.getParameter("content"), file);
             response.setStatus(HttpStatus.OK.value());
-            response.getWriter().write(new ObjectMapper().writeValueAsString(responseMessage));
+            response.getWriter().write(new ObjectMapper().writeValueAsString(userService.addPost(email, request.getParameter("content"), file)));
         } catch (Exception e) {
             log.error("Error posting content {}", e.getMessage());
             response.setStatus(EXPECTATION_FAILED.value());

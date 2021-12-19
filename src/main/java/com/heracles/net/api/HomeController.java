@@ -8,15 +8,12 @@ import org.springframework.http.HttpHeaders;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.heracles.net.model.FileDB;
 import com.heracles.net.model.User;
 import com.heracles.net.service.FileStorageService;
 import com.heracles.net.service.UserService;
 import com.heracles.net.util.UserRegisterDTO;
 import com.heracles.net.util.UserUpdateDTO;
-import org.springframework.http.MediaType;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,9 +32,10 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 @RequestMapping(path = "/home")
 public class HomeController {
-
+    
     private UserService userService;
-
+    private FileStorageService storageService;
+    
     @GetMapping(path = "/users")
     public ResponseEntity<List<User>> getUsers() {
         log.info("All users requested");
@@ -68,9 +66,6 @@ public class HomeController {
         }
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("Alteraditos");
     }
-
-    @Autowired
-    private FileStorageService storageService;
   
     @GetMapping(value = "/files", produces = "image/*")
     public void getFile(HttpServletRequest request, HttpServletResponse response) throws IOException {

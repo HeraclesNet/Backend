@@ -27,13 +27,17 @@ import lombok.extern.slf4j.Slf4j;
 public class UserService implements UserDetailsService, UserInterfaceService {
 
     private final UserRepository userRepository;
-
-    PasswordEncoder passwordEncoder;
+    private final PostRepository postRepository;
+    private final FileDBRepository fileDBRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
-        this.passwordEncoder = new BCryptPasswordEncoder();
+    public UserService(UserRepository userRepository, PostRepository postRepository,
+            FileDBRepository fileDBRepository) {
         this.userRepository = userRepository;
+        this.postRepository = postRepository;
+        this.fileDBRepository = fileDBRepository;
+        this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
     @Override
@@ -97,16 +101,16 @@ public class UserService implements UserDetailsService, UserInterfaceService {
     @Override
     public ResponseMessage addPost(String email, String content, MultipartFile file) throws UsernameNotFoundException, IOException{
         User user = userRepository.findUserByEmail(email).orElseThrow();
-
         ResponseMessage responseMessage = new ResponseMessage();
         if (file == null) {
-            user.addPost(new AppPost(content, user));
+            postRepository.save(new AppPost(content, user));
             responseMessage.setMessage("OnlyText");
         } else {
-            user.addPost(new AppPost(content, user, file));
-            userRepository.save(user);
-            user = userRepository.findUserByEmail(email).orElseThrow();
-            responseMessage.setMessage(user.getPosts().get(user.getPosts().size()-1).getFiles().get(0).getPathUrl());
+            AppPost post = new AppPost(content, user);
+            FileDB fileDB = new FileDB(file, post);
+            postRepository.save(post);
+            fileDBRepository.save(fileDB);
+            responseMessage.setMessage(fileDB.getPathUrl());
         }
         return responseMessage;
     }

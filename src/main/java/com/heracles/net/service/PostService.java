@@ -1,7 +1,11 @@
 package com.heracles.net.service;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
+import com.heracles.net.model.AppPost;
+import com.heracles.net.model.FileDB;
+import com.heracles.net.repository.FileDBRepository;
 import com.heracles.net.repository.PostRepository;
 import com.heracles.net.util.PostDTO;
 
@@ -21,11 +25,17 @@ import lombok.extern.slf4j.Slf4j;
 public class PostService implements PostServiceInterface {
 
 	private final PostRepository postRepository;
+	private final FileDBRepository fileDBRepository;
 
 	@Override
 	public Page<PostDTO> getPosts(Pageable pageable) {
 		log.info("Get all posts");
-		return new PageImpl<>(postRepository.findAll(pageable).stream().map(PostDTO::new).collect(Collectors.toList()));
+		List<AppPost> findAll = postRepository.findAll(pageable).getContent();
+		List<PostDTO> collect = findAll.stream().map(post -> {
+			List<FileDB> files = fileDBRepository.findByPost(post);
+			return new PostDTO(post, files);
+		}).collect(Collectors.toList());
+		return new PageImpl<>(collect);
 	}
 
 	
