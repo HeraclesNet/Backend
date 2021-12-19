@@ -1,6 +1,7 @@
 package com.heracles.net.model;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,6 +16,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -58,6 +60,13 @@ public class FileDB {
     this.type = file.getContentType();
     this.data = file.getBytes();
     this.post = post;
+  }
+  
+  public String getPathUrl(){
+    return ServletUriComponentsBuilder
+    .fromCurrentContextPath()
+    .path("/home/files").queryParam("id",this.getId())
+    .toUriString();
   }
 
 }
