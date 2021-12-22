@@ -2,20 +2,42 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.heracles</groupId>
+	<artifactId>net</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>heracles_net</name>
+	<description>Red Social de entrenamiento Heracles</description>
+
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>2.6.0</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.heracles</groupId>
-	<artifactId>net</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>heracles_net</name>
-	<description>Red Social de entrenamiento Heracles</description>
+
 	<properties>
 		<java.version>11</java.version>
 	</properties>
+	
+	<profiles>
+		<profile>
+			<id>dev</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<activedProperties>dev</activedProperties>
+			</properties>
+		</profile>
+		<profile>
+			<id>prod</id>
+			<properties>
+				<activedProperties>prod</activedProperties>
+			</properties>
+		</profile>
+	</profiles>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -48,6 +70,11 @@
 			<groupId>com.auth0</groupId>
 			<artifactId>java-jwt</artifactId>
 			<version>3.18.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-core</artifactId>
+			<version>8.2.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -84,6 +111,32 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.flywaydb</groupId>
+					<artifactId>flyway-maven-plugin</artifactId>
+					<executions>
+						<execution>
+							<?m2e execute onConfiguration,onIncremental?>
+							<phase>generate-sources</phase>
+							<goals>
+								<goal>migrate</goal>
+							</goals>
+						</execution>
+					</executions>
+				<configuration>
+					<driver>org.postgresql.Driver</driver>
+					<url>jdbc:postgresql://localhost:5432/heracles_net</url>
+					<user>postgres</user>
+					<password>1006</password>
+					<baselineOnMigrate>true</baselineOnMigrate>
+					<schemas>public</schemas>
+					<locations>
+						<location>
+							classpath:src/main/db/migration/postgresql
+						</location>
+					</locations>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
