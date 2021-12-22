@@ -104,7 +104,7 @@ public class UserService implements UserDetailsService, UserInterfaceService {
         ResponseMessage responseMessage = new ResponseMessage();
         if (file == null) {
             postRepository.save(new AppPost(content, user));
-            responseMessage.setMessage("OnlyText");
+            responseMessage.setMessage("Post added only text");
         } else {
             AppPost post = new AppPost(content, user);
             FileDB fileDB = new FileDB(file, post);

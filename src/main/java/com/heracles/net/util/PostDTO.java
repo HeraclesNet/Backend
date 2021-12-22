@@ -14,11 +14,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PostDTO {
+
 	private String id;
 	private String post;
 	private int muscles;
 	private boolean hasFiles;
 	private List<ResponseFile> files;
+	private UserPostDTO user;
 
 	public PostDTO(AppPost post, List<FileDB> files) {
 		this.id = post.getId();
@@ -26,6 +28,7 @@ public class PostDTO {
 		this.muscles = post.getMuscles();
 		this.files = files.stream().map(ResponseFile::new).collect(java.util.stream.Collectors.toList());
 		this.hasFiles = !this.files.isEmpty();
+		this.user = new UserPostDTO(post.getUser());
 	}
 
 	@Override
