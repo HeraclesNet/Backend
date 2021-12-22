@@ -2,8 +2,6 @@ package com.heracles.net.filter;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -19,18 +17,19 @@ import com.heracles.net.util.UserLoginDTO;
 import static com.heracles.net.util.JwtUtil.generateToken;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMethod;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@CrossOrigin(origins = "*", methods = { RequestMethod.GET, RequestMethod.POST })
 public class CustomAuthentication extends UsernamePasswordAuthenticationFilter {
 
 	private final AuthenticationManager authenticationManager;
@@ -45,7 +44,6 @@ public class CustomAuthentication extends UsernamePasswordAuthenticationFilter {
 		log.info("Attempting authentication");
 		String email = request.getParameter("email");
 		String password = request.getParameter("password");
-		log.info("email: " + email + " password: " + password);
 		UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(email, password);
 		return authenticationManager.authenticate(token);
 	}
@@ -62,5 +60,14 @@ public class CustomAuthentication extends UsernamePasswordAuthenticationFilter {
 		AuthMessage authMessage = new AuthMessage(token, refreshToken, new UserLoginDTO(userDetails.getUser()));
 		ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());	
 		response.getWriter().write(mapper.writeValueAsString(authMessage));
+	}
+
+	@Override
+	protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
+			AuthenticationException failed) throws IOException, ServletException {
+		log.info("Unsuccessful authentication");
+		response.setStatus(HttpStatus.FORBIDDEN.value());
+		response.setContentType(APPLICATION_JSON_VALUE);
+		response.getWriter().write("{\"error\":\"" + failed.getMessage() + "\"}");
 	}
 }

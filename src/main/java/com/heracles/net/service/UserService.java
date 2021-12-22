@@ -70,7 +70,6 @@ public class UserService implements UserDetailsService, UserInterfaceService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Optional<User> userOptional = userRepository.findUserByEmail(email);
         if (!userOptional.isPresent()) {
-            log.error("User email {} not found", email);
             throw new UsernameNotFoundException("User not found");
         }
         return new CustomUserDetails(userOptional.get());
