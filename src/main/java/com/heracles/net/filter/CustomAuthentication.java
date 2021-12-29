@@ -12,7 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.heracles.net.message.AuthMessage;
 import com.heracles.net.util.CustomUserDetails;
-import com.heracles.net.util.UserLoginDTO;
+import com.heracles.net.util.UserDTO;
 
 import static com.heracles.net.util.JwtUtil.generateToken;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -23,10 +23,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMethod;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -57,7 +55,7 @@ public class CustomAuthentication extends UsernamePasswordAuthenticationFilter {
 		User user = new User(userDetails.getUsername(), userDetails.getPassword(), userDetails.getAuthorities());
 		String token = generateToken(user, new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 5));
 		String refreshToken = generateToken(user, new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24));
-		AuthMessage authMessage = new AuthMessage(token, refreshToken, new UserLoginDTO(userDetails.getUser()));
+		AuthMessage authMessage = new AuthMessage(token, refreshToken, new UserDTO(userDetails.getUser()));
 		ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());	
 		response.getWriter().write(mapper.writeValueAsString(authMessage));
 	}

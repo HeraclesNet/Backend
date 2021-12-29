@@ -1,6 +1,6 @@
 package com.heracles.net.message;
 
-import com.heracles.net.util.UserLoginDTO;
+import com.heracles.net.util.UserDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,5 +10,5 @@ import lombok.Data;
 public class AuthMessage {
 	private String token;
 	private String refreshToken;
-	private UserLoginDTO user;
+	private UserDTO user;
 }

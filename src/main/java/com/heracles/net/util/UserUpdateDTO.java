@@ -4,6 +4,6 @@ import lombok.Data;
 @Data
 public class UserUpdateDTO {
     String email;
-    String Key;
+    String key;
     String value;
 }

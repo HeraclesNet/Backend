@@ -7,7 +7,7 @@ import com.heracles.net.model.User;
 import lombok.Data;
 
 @Data
-public class UserLoginDTO {
+public class UserDTO {
     private String name;
 	private String email;
 	private String nickName;
@@ -16,7 +16,7 @@ public class UserLoginDTO {
     private boolean gender;
     private float height;
 
-    public UserLoginDTO(User user){
+    public UserDTO(User user){
         this.name = user.getName();
         this.email = user.getEmail();
         this.nickName = user.getNickName();

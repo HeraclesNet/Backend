@@ -50,3 +50,12 @@ CREATE TABLE "public"."files" (
 	CONSTRAINT "files_pkey" PRIMARY KEY ("id"),
 	CONSTRAINT "fk_post_id" FOREIGN KEY ("post_id") REFERENCES "posts" ("id")
 );
+
+CREATE TABLE "public"."followers" (
+	"id" character varying(255) NOT NULL DEFAULT uuid_generate_v4()::text,
+	"user_id" character varying(255) NOT NULL,
+	"follower_id" character varying(255) NOT NULL,
+	CONSTRAINT "followers_pkey" PRIMARY KEY ("id"),
+	CONSTRAINT "fk_user_id" FOREIGN KEY ("user_id") REFERENCES "users" ("id"),
+	CONSTRAINT "fk_follower_id" FOREIGN KEY ("follower_id") REFERENCES "users" ("id")
+);

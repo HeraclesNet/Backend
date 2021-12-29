@@ -1,47 +1,29 @@
 package com.heracles.net.message;
 
+import com.heracles.net.model.FileDB;
+
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@Data
+@AllArgsConstructor
 public class ResponseFile {
+  
     private String name;
     private String url;
     private String type;
     private long size;
-  
-    public ResponseFile(String name, String url, String type, long size) {
-      this.name = name;
-      this.url = url;
-      this.type = type;
-      this.size = size;
+
+    public ResponseFile(FileDB fileDB) {
+        String fileDownloadUri = ServletUriComponentsBuilder
+          .fromCurrentContextPath()
+          .path("/home/files").queryParam("id",fileDB.getId())
+          .toUriString();
+        this.name = fileDB.getName();
+        this.url = fileDownloadUri;
+        this.type = fileDB.getType();
+        this.size = fileDB.getData().length;
     }
-  
-    public String getName() {
-      return name;
-    }
-  
-    public void setName(String name) {
-      this.name = name;
-    }
-  
-    public String getUrl() {
-      return url;
-    }
-  
-    public void setUrl(String url) {
-      this.url = url;
-    }
-  
-    public String getType() {
-      return type;
-    }
-  
-    public void setType(String type) {
-      this.type = type;
-    }
-  
-    public long getSize() {
-      return size;
-    }
-  
-    public void setSize(long size) {
-      this.size = size;
-    }
-  }
+}
