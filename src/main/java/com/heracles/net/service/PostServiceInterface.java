@@ -8,5 +8,6 @@ import org.springframework.data.domain.Pageable;
 public interface PostServiceInterface {
 	
 	public Page<PostDTO> getPosts(Pageable pageable);
+	public Page<PostDTO> getUserPost(String userID);
 	
 }
