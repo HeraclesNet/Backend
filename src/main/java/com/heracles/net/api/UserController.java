@@ -39,6 +39,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 
 @Slf4j
 @Transactional
@@ -60,7 +61,7 @@ public class UserController {
 
     @GetMapping(value = "/posts", produces = APPLICATION_JSON_VALUE)
     public void getPosts(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws IOException {
         response.setContentType(APPLICATION_JSON_VALUE);
         String token = request.getHeader(AUTHORIZATION);
         if (token == null) {
@@ -74,16 +75,16 @@ public class UserController {
             response.getWriter().write(new ObjectMapper().writeValueAsString(new ResponseMessage(INVALID_TOKEN)));
             return;
         }
-        log.info("User {} is requesting posts", decodedJWT.getSubject());
         Pageable page = PageRequest.of(request.getParameter("pageNumber") == null ? 0 : Integer.parseInt(request.getParameter("pageNumber")),
                 request.getParameter("pageSize") == null ? 10 : Integer.parseInt(request.getParameter("pageSize")));
-        Page<PostDTO> posts = postService.getPosts(page);
+        Page<PostDTO> posts = postService.getPosts(decodedJWT.getSubject(), page);
         response.setStatus(HttpStatus.OK.value());
         response.getWriter().write(new ObjectMapper().writeValueAsString(posts));
     }
 
     @PostMapping(value = "/media/upload", consumes = MULTIPART_FORM_DATA_VALUE, produces = APPLICATION_JSON_VALUE)
-    public void uploadMedia(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    public void uploadMedia(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
         String token = request.getHeader(AUTHORIZATION);
         if (token == null) {
             response.setStatus(FORBIDDEN.value());
@@ -102,9 +103,42 @@ public class UserController {
             log.info("Posting contento for user {}", email);
             MultipartFile file = ((StandardMultipartHttpServletRequest) request).getFile("file");
             response.setStatus(HttpStatus.OK.value());
-            response.getWriter().write(new ObjectMapper().writeValueAsString(userService.addPost(email, request.getParameter("content"), file)));
+            response.getWriter().write(new ObjectMapper()
+                    .writeValueAsString(userService.addPost(email, request.getParameter("content"), file)));
         } catch (Exception e) {
             log.error("Error posting content {}", e.getMessage());
+            response.setStatus(EXPECTATION_FAILED.value());
+            response.getWriter().write(new ObjectMapper().writeValueAsString(new ResponseMessage(e.getMessage())));
+        }
+    }
+    
+    @PutMapping(value = "/post/muscle", produces = APPLICATION_JSON_VALUE)
+    public void addMuscle(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        log.info("Adding muscle");
+        String token = request.getHeader(AUTHORIZATION);
+        if (token == null) {
+            response.setStatus(FORBIDDEN.value());
+            response.getWriter().write(new ObjectMapper().writeValueAsString(new ResponseMessage(NO_TOKEN_PROVIDED)));
+            return;
+        }
+        DecodedJWT decodedJWT = verifier(token.substring(7));
+        if (decodedJWT == null) {
+            response.setStatus(EXPECTATION_FAILED.value());
+            response.getWriter().write(new ObjectMapper().writeValueAsString(new ResponseMessage(INVALID_TOKEN)));
+            return;
+        }
+        response.setContentType(APPLICATION_JSON_VALUE);
+        String email = decodedJWT.getSubject();
+        try {
+            log.info("updating post for user {}", email);
+            String postId = request.getParameter("postId");
+            int muscle = Integer.parseInt(request.getParameter("muscle"));
+            postService.upDateMuscle(postId, muscle);
+            response.setStatus(HttpStatus.OK.value());
+            response.getWriter().write(new ObjectMapper().writeValueAsString(new ResponseMessage("Muscle updated")));
+        } catch (Exception e) {
+            log.error("Error posting muscle {}", e.getMessage());
             response.setStatus(EXPECTATION_FAILED.value());
             response.getWriter().write(new ObjectMapper().writeValueAsString(new ResponseMessage(e.getMessage())));
         }

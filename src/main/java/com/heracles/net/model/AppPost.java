@@ -30,8 +30,8 @@ public class AppPost {
 	@Column(name = "muscles", columnDefinition = "INTEGER DEFAULT 0")
 	private int muscles;
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn( referencedColumnName = "id", nullable = false, updatable = false, foreignKey = @ForeignKey(name = "fk_user_id"))
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(referencedColumnName = "id", nullable = false, updatable = false, foreignKey = @ForeignKey(name = "fk_user_id"))
 	private User user;
 
 	@Column(name = "created_at", columnDefinition = "TIMESTAMP")

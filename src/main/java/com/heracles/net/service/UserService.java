@@ -33,19 +33,19 @@ public class UserService implements UserDetailsService, UserInterfaceService {
 
     @Autowired
     public UserService(UserRepository userRepository, PostRepository postRepository,
-            FileDBRepository fileDBRepository) {
+    FileDBRepository fileDBRepository) {
         this.userRepository = userRepository;
         this.postRepository = postRepository;
         this.fileDBRepository = fileDBRepository;
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
-
+    
     @Override
     public List<User> getUsers() {
         log.info("Getting all users");
         return userRepository.findAll();
     }
-
+    
     @Override
     public void addNewUser(User user) throws Exception {
         Optional<User> userOptional = userRepository.findUserByEmail(user.getEmail());
