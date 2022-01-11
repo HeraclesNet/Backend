@@ -54,13 +54,13 @@ public class UserService implements UserDetailsService, UserInterfaceService {
     public void addNewUser(User user) throws Exception {
         Optional<User> userOptional = userRepository.findUserByEmail(user.getEmail());
         if (userOptional.isPresent()) {
-            log.error("User already exists");
-            throw new Exception("BadRequest");
+            log.error("User with email {} already exists", user.getEmail());
+            throw new Exception(String.format("User with email %s already exists", user.getEmail()));
         }
         userOptional = userRepository.findUserByNickName(user.getNickName());
         if (userOptional.isPresent()) {
             log.error("NickName already exists {}", user.getNickName());
-            throw new Exception("BadRequest");
+            throw new Exception(String.format("Nickname already exist %s", user.getNickName()));
         }
         String encodedPassword = this.passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);

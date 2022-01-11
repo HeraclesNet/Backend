@@ -7,6 +7,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import com.heracles.net.util.UserRegisterDTO;
+
 import org.hibernate.annotations.GenericGenerator;
 
 import lombok.Data;
@@ -68,5 +70,16 @@ public class User implements Serializable {
 		this.height = height;
 		this.gender = gender;
 		this.visibility = visibility;
+	}
+
+	public User(UserRegisterDTO user) {
+		this.name = user.getName();
+		this.dateOfBirth = user.getDateOfBirth();
+		this.email = user.getEmail();
+		this.nickName = user.getNickName();
+		this.password = user.getPassword();
+		this.height = this.weight = 0.0f;
+		this.gender = false;
+		this.visibility = true;
 	}
 }
