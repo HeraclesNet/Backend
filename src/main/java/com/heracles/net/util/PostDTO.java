@@ -1,5 +1,7 @@
 package com.heracles.net.util;
 
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.List;
 
 import com.heracles.net.message.ResponseFile;
@@ -22,6 +24,7 @@ public class PostDTO {
 	private List<ResponseFile> files;
 	private UserPostDTO user;
 	private boolean isMuscle;
+	private String date;
 
 	public PostDTO(AppPost post, List<FileDB> files, boolean isMuscle) {
 		this.id = post.getId();
@@ -31,6 +34,7 @@ public class PostDTO {
 		this.hasFiles = !this.files.isEmpty();
 		this.user = new UserPostDTO(post.getUser());
 		this.isMuscle = isMuscle;
+		this.date = post.getCreatedAt().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG));
 	}
 
 	@Override

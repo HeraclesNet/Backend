@@ -35,6 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -75,8 +76,21 @@ public class UserController {
             response.getWriter().write(new ObjectMapper().writeValueAsString(new ResponseMessage(INVALID_TOKEN)));
             return;
         }
-        Pageable page = PageRequest.of(request.getParameter("pageNumber") == null ? 0 : Integer.parseInt(request.getParameter("pageNumber")),
-                request.getParameter("pageSize") == null ? 10 : Integer.parseInt(request.getParameter("pageSize")));
+        int pageNumber = request.getParameter("number") == null ? 0
+                : Integer.parseInt(request.getParameter("number")); 
+        int pageSize = request.getParameter("size") == null ? 10
+                : Integer.parseInt(request.getParameter("size"));
+        String sortBy = request.getParameter("sort");
+        log.info("pageNumber: {}, pageSize: {}, sortBy: {}", pageNumber, pageSize, sortBy);
+        Pageable page;
+        if (sortBy.equals("createdAt")) 
+            page = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy).ascending());
+        else if(sortBy.equals("muscles"))
+            page = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy).descending());
+        else {
+            // TODO: Sort by friends
+            page = PageRequest.of(pageNumber, pageSize);
+        }
         Page<PostDTO> posts = postService.getPosts(decodedJWT.getSubject(), page);
         response.setStatus(HttpStatus.OK.value());
         response.getWriter().write(new ObjectMapper().writeValueAsString(posts));
