@@ -6,7 +6,6 @@ import java.util.List;
 import com.heracles.net.message.ResponseMessage;
 import com.heracles.net.model.User;
 import com.heracles.net.util.UserDTO;
-import com.heracles.net.util.UserProfile;
 
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

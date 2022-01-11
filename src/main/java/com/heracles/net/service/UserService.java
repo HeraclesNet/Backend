@@ -9,7 +9,6 @@ import com.heracles.net.model.*;
 import com.heracles.net.repository.*;
 import com.heracles.net.util.CustomUserDetails;
 import com.heracles.net.util.UserDTO;
-import com.heracles.net.util.UserProfile;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -138,9 +137,7 @@ public class UserService implements UserDetailsService, UserInterfaceService {
 
     @Override
     public UserDTO getUserDTO(String email) {
-
-        User user = userRepository.findUserByEmail(email).get();
-
+        User user = userRepository.findUserByEmail(email).orElseThrow();
         return new UserDTO(user);
     }
 }

@@ -10,7 +10,6 @@ import com.heracles.net.repository.FileDBRepository;
 import com.heracles.net.repository.PostRepository;
 import com.heracles.net.repository.UserRepository;
 import com.heracles.net.util.PostDTO;
-import com.heracles.net.util.UserRegisterDTO;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -44,8 +43,7 @@ public class PostService implements PostServiceInterface {
 
 	@Override
 	public Page<PostDTO> getUserPost(String email) {
-		
-		User user = userRepository.findUserByEmail(email).get();
+		User user = userRepository.findUserByEmail(email).orElseThrow();
 		List<PostDTO> getPosts = postRepository.findUserPost(user.getId()).stream().map(post -> {
 			List<FileDB> files = fileDBRepository.findByPost(post);
 			return new PostDTO(post, files);

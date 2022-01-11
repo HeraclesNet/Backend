@@ -12,14 +12,12 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.EXPECTATION_FAILED;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.heracles.net.message.ResponseMessage;
 import com.heracles.net.service.PostService;
 import com.heracles.net.service.UserService;
 import com.heracles.net.util.UserProfile;
-import com.heracles.net.service.*;
 import static com.heracles.net.util.JwtUtil.verifier;
 
 import org.springframework.http.HttpStatus;
@@ -42,10 +40,10 @@ public class ProfileController {
     private final UserService userService;
     private final PostService postService;
     private static final String INVALID_TOKEN = "Invalid token";
-    private static final String NO_TOKEN_PROVIDED = "No token provided";
+    private static final String NO_TOKEN_PROVIDED = "No token provided"; 
     
     @GetMapping(value = "/user")
-    public void profile(HttpServletRequest request, HttpServletResponse response) throws JsonProcessingException, IOException{
+    public void profile(HttpServletRequest request, HttpServletResponse response) throws IOException{
         response.setContentType(APPLICATION_JSON_VALUE);
         String token = request.getHeader(AUTHORIZATION);
         if (token == null) {

@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.heracles.net.model.AppPost;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
