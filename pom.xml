@@ -18,7 +18,7 @@
 	<properties>
 		<java.version>11</java.version>
 	</properties>
-
+	
 	<profiles>
 		<profile>
 			<id>dev</id>
@@ -36,7 +36,6 @@
 			</properties>
 		</profile>
 	</profiles>
-	
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -70,11 +69,11 @@
 			<artifactId>java-jwt</artifactId>
 			<version>3.18.2</version>
 		</dependency>
-<!-- 		<dependency>
+		<dependency>
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-core</artifactId>
 			<version>8.2.1</version>
-		</dependency> -->
+		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
@@ -98,6 +97,32 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.flywaydb</groupId>
+					<artifactId>flyway-maven-plugin</artifactId>
+					<executions>
+						<execution>
+							<?m2e execute onConfiguration,onIncremental?>
+							<phase>generate-sources</phase>
+							<goals>
+								<goal>migrate</goal>
+							</goals>
+						</execution>
+					</executions>
+				<configuration>
+					<driver>org.postgresql.Driver</driver>
+					<url>jdbc:postgresql://localhost:5432/heracles_net</url>
+					<user>postgres</user>
+					<password>1006</password>
+					<baselineOnMigrate>true</baselineOnMigrate>
+					<schemas>public</schemas>
+					<locations>
+						<location>
+							classpath:src/main/db/migration/postgresql
+						</location>
+					</locations>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
