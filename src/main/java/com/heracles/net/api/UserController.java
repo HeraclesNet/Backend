@@ -5,6 +5,7 @@ import static com.heracles.net.util.JwtUtil.generateToken;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.EXPECTATION_FAILED;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.GATEWAY_TIMEOUT;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
@@ -38,6 +39,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -49,6 +51,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 @RequestMapping(path = "/user")
 public class UserController {
 
+    private static final String PAGE_SIZE = "pageSize";
+    private static final String PAGE_NUMBER = "pageNumber";
     private static final String INVALID_TOKEN = "Invalid token";
     private static final String NO_TOKEN_PROVIDED = "No token provided";
 
@@ -77,8 +81,8 @@ public class UserController {
             return;
         }
         log.info("User {} is requesting posts", decodedJWT.getSubject());
-        Pageable page = PageRequest.of(request.getParameter("pageNumber") == null ? 0 : Integer.parseInt(request.getParameter("pageNumber")),
-                request.getParameter("pageSize") == null ? 10 : Integer.parseInt(request.getParameter("pageSize")));
+        Pageable page = PageRequest.of(request.getParameter(PAGE_NUMBER) == null ? 0 : Integer.parseInt(request.getParameter(PAGE_NUMBER)),
+                request.getParameter(PAGE_SIZE) == null ? 10 : Integer.parseInt(request.getParameter(PAGE_SIZE)));
         Page<PostDTO> posts = postService.getPosts(page);
         response.setStatus(HttpStatus.OK.value());
         response.getWriter().write(new ObjectMapper().writeValueAsString(posts));
@@ -114,7 +118,7 @@ public class UserController {
         }
     }
     
-    @PutMapping(value = "/fan", produces = APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/new/fan", produces = APPLICATION_JSON_VALUE)
     public void follow(HttpServletRequest request, HttpServletResponse response) throws IOException {
         log.info("Following user");
         String token = request.getHeader(AUTHORIZATION);
@@ -160,13 +164,47 @@ public class UserController {
             return;
         }
         String email = decodedJWT.getSubject();
+        String pageNumber = request.getParameter(PAGE_NUMBER);
+        String pageSize = request.getParameter(PAGE_SIZE);
         try {
             log.info("Getting fans for user {}", email);
+            Pageable page = PageRequest.of(pageNumber == null ? 0 : Integer.parseInt(pageNumber),
+                    pageSize == null ? 10 : Integer.parseInt(pageSize));
             response.setStatus(HttpStatus.OK.value());
-            response.getWriter().write(new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(userService.getFans(email)));
+            response.getWriter().write(new ObjectMapper().registerModule(
+                new JavaTimeModule()).writeValueAsString(userService.getFans(email, page)));
         } catch (Exception e) {
             log.error("Error getting fans {}", e.getMessage());
             response.setStatus(EXPECTATION_FAILED.value());
+            response.getWriter().write(new ObjectMapper().writeValueAsString(new ResponseMessage(e.getMessage())));
+        }
+    }
+
+    @DeleteMapping(value = "/remove/fan", produces = APPLICATION_JSON_VALUE)
+    public void unFollow (HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String token = request.getHeader(AUTHORIZATION);
+        response.setContentType(APPLICATION_JSON_VALUE);
+        if (token == null) {
+            response.setStatus(FORBIDDEN.value());
+            response.getWriter().write(new ObjectMapper().writeValueAsString(new ResponseMessage(NO_TOKEN_PROVIDED)));
+            return;
+        }
+        DecodedJWT decodedJWT = verifier(token.substring(7));
+        if (decodedJWT == null) {
+            response.setStatus(EXPECTATION_FAILED.value());
+            response.getWriter().write(new ObjectMapper().writeValueAsString(new ResponseMessage(INVALID_TOKEN)));
+            return;
+        }
+        String email = decodedJWT.getSubject();
+        String userToUnFollow = request.getParameter("userToUnFollow");
+        log.info("User {} is unfollowing user {}", email, userToUnFollow);
+        try {
+            userService.unFollowUser(email, userToUnFollow);
+            response.setStatus(HttpStatus.OK.value());
+            response.getWriter().write(new ObjectMapper().writeValueAsString(new ResponseMessage("User unfollowed")));
+        } catch (Exception e) {
+            log.error("Error unfollowing user {}", e.getMessage());
+            response.setStatus(GATEWAY_TIMEOUT.value());
             response.getWriter().write(new ObjectMapper().writeValueAsString(new ResponseMessage(e.getMessage())));
         }
     }

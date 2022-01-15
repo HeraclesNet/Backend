@@ -8,14 +8,17 @@ import com.heracles.net.model.User;
 import com.heracles.net.util.UserDTO;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface UserInterfaceService {
 
-	public Page<UserDTO> getFans(String userId); 
+	public void unFollowUser(String email, String nickName) throws Exception;
 
-	public ResponseMessage followUser(String userId, String followerId);
+	public Page<UserDTO> getFans(String email, Pageable pageable); 
+
+	public ResponseMessage followUser(String email, String nickName);
 
 	public void addNewUser(User user) throws Exception;
 

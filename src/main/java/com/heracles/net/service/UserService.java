@@ -13,6 +13,7 @@ import com.heracles.net.util.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -119,19 +120,24 @@ public class UserService implements UserDetailsService, UserInterfaceService {
     }
 
     @Override
-    public ResponseMessage followUser(String userId, String followerId) {
-        User user = userRepository.findUserByEmail(userId).orElseThrow();
-        User follower = userRepository.findUserByNickName(followerId).orElseThrow();
+    public ResponseMessage followUser(String email, String nickName) {
+        User user = userRepository.findUserByEmail(email).orElseThrow();
+        User follower = userRepository.findUserByNickName(nickName).orElseThrow();
+        if(user.getId().equals(follower.getId())) {
+            return new ResponseMessage("You can't follow yourself");
+        } else if(followerRepository.findByUserIdAndFollowerId(user.getId(), follower.getId()).isPresent()) {
+            return new ResponseMessage("You already follow this user");
+        }
         followerRepository.save(new FollowerDB(user.getId(), follower.getId()));
         return new ResponseMessage("User followed");
     }
 
     @Override
-    public Page<UserDTO> getFans(String userId) {
-        User user = userRepository.findUserByEmail(userId).orElseThrow();
-        List<User> fans = userRepository.findAllFollowing(user.getId());
+    public Page<UserDTO> getFans(String email, Pageable pageable) {
+        User user = userRepository.findUserByEmail(email).orElseThrow();
+        Page<User> fans = userRepository.findAllFollowing(user.getId(), pageable);
         List<UserDTO> fansDTO = new ArrayList<>();
-        fans.forEach(f -> fansDTO.add(new UserDTO(f)));
+        fans.stream().forEach(f -> fansDTO.add(new UserDTO(f)));
         return new PageImpl<>(fansDTO);
     }
 
@@ -139,5 +145,15 @@ public class UserService implements UserDetailsService, UserInterfaceService {
     public UserDTO getUserDTO(String email) {
         User user = userRepository.findUserByEmail(email).orElseThrow();
         return new UserDTO(user);
+    }
+
+    public void unFollowUser(String email, String userToUnFollow) throws Exception {
+        User user = userRepository.findUserByEmail(email).orElseThrow();
+        User userToUnFollowUser = userRepository.findUserByNickName(userToUnFollow).orElseThrow();
+        try {
+            followerRepository.deleteByUserIdAndFollowerId(user.getId(), userToUnFollowUser.getId());
+        } catch (Exception e) {
+            throw new Exception("User no followed");
+        }
     }
 }
