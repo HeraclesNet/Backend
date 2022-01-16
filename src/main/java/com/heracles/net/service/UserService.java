@@ -37,7 +37,7 @@ public class UserService implements UserDetailsService, UserInterfaceService {
 
     @Autowired
     public UserService(UserRepository userRepository, PostRepository postRepository,
-    FileDBRepository fileDBRepository) {
+    FileDBRepository fileDBRepository,FollowerRepository followerRepository) {
         this.userRepository = userRepository;
         this.postRepository = postRepository;
         this.fileDBRepository = fileDBRepository;

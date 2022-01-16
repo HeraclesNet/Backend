@@ -57,7 +57,7 @@ public class PostService implements PostServiceInterface {
 		User user = userRepository.findUserByEmail(email).orElseThrow();
 		List<PostDTO> getPosts = postRepository.findUserPost(user.getId()).stream().map(post -> {
 			List<FileDB> files = fileDBRepository.findByPost(post);
-			return new PostDTO(post, files);
+			return new PostDTO(post, files,false);
 		}).collect(Collectors.toList());
 		return new PageImpl<>(getPosts);
 	}
@@ -78,5 +78,6 @@ public class PostService implements PostServiceInterface {
 			musclesRepository.deleteByUserIdAndPostId(user.getId(), postId);
 		}
 	}
+
 
 }
