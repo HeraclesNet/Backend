@@ -18,6 +18,7 @@
 	<properties>
 		<java.version>11</java.version>
 	</properties>
+	
 	<profiles>
 		<profile>
 			<id>dev</id>
@@ -35,7 +36,6 @@
 			</properties>
 		</profile>
 	</profiles>
-	
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -69,11 +69,6 @@
 			<artifactId>java-jwt</artifactId>
 			<version>3.18.2</version>
 		</dependency>
-<!-- 		<dependency>
-			<groupId>org.flywaydb</groupId>
-			<artifactId>flyway-core</artifactId>
-			<version>8.2.1</version>
-		</dependency> -->
 		<dependency>
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-core</artifactId>
