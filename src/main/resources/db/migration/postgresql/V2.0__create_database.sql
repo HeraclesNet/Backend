@@ -2,6 +2,7 @@ DROP TABLE IF EXISTS "users" CASCADE;
 DROP TABLE IF EXISTS "files" CASCADE;
 DROP TABLE IF EXISTS "posts" CASCADE;
 DROP TABLE IF EXISTS "rutina" CASCADE;
+DROP TABLE IF EXISTS "followers" CASCADE;
 
 -----------------------
 -- Table: users
