@@ -1,7 +1,8 @@
 DROP TABLE IF EXISTS "users" CASCADE;
 DROP TABLE IF EXISTS "files" CASCADE;
 DROP TABLE IF EXISTS "posts" CASCADE;
-DROP TABLE IF EXISTS "rutina" CASCADE;
+DROP TABLE IF EXISTS "rutinas" CASCADE;
+DROP TABLE IF EXISTS "followers" CASCADE;
 
 -----------------------
 -- Table: users
@@ -58,4 +59,14 @@ CREATE TABLE "public"."followers" (
 	CONSTRAINT "followers_pkey" PRIMARY KEY ("id"),
 	CONSTRAINT "fk_user_id" FOREIGN KEY ("user_id") REFERENCES "users" ("id"),
 	CONSTRAINT "fk_follower_id" FOREIGN KEY ("follower_id") REFERENCES "users" ("id")
+);
+
+CREATE TABLE "public"."rutinas"  (
+	"id" character varying(255) NOT NULL DEFAULT uuid_generate_v4()::text,
+	"user_id" character varying(255) NOT NULL,
+	"dayOfWeek" INTEGER  NOT NULL,
+	"hour" character varying(255),
+	"tex" TEXT,
+	CONSTRAINT "idPK" PRIMARY KEY ("id"),
+	CONSTRAINT "fk_user_id" FOREIGN KEY ("user_id") REFERENCES "users" ("id")
 );
