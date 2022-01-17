@@ -35,7 +35,7 @@ public class PostService implements PostServiceInterface {
 	private final UserRepository userRepository;
 
 	@Override
-	public Page<PostDTO> getPosts(String email, Pageable pageable) {
+	public Page<PostDTO> getPosts(boolean isFriend, String email, Pageable pageable) {
 		Optional<User> optional = userRepository.findUserByEmail(email);
 		if (!optional.isPresent()) {
 			log.error("User not found");
@@ -43,7 +43,13 @@ public class PostService implements PostServiceInterface {
 		}
 		User user = optional.get();
 		log.info("Get all posts for user: {}", user.getId());
-		List<AppPost> findAll = postRepository.findAll(pageable).getContent();
+		List<AppPost> findAll;
+		if (isFriend) {
+			findAll = postRepository.findFriendsPost(user.getId(), pageable).getContent();
+		} else {
+			findAll = postRepository.findAll(pageable).getContent();
+		}
+		postRepository.findAll(pageable).getContent();
 		List<PostDTO> collect = findAll.stream().map(post -> {
 			List<FileDB> files = fileDBRepository.findByPost(post);
 			Optional<PostMuscle> postMuscle = musclesRepository.findByUserIdAndPostId(user.getId(), post.getId());

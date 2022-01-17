@@ -72,15 +72,17 @@ public class PostController {
 		String sortBy = request.getParameter("sort");
 		log.info("pageNumber: {}, pageSize: {}, sortBy: {}", pageNumber, pageSize, sortBy);
 		Pageable page;
-		if (sortBy.equals("createdAt"))
+		Page<PostDTO> posts;
+		if (sortBy.equals("createdAt")) {
 			page = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy).ascending());
-		else if (sortBy.equals("muscles"))
+			posts = postService.getPosts(false, decodedJWT.getSubject(), page);
+		} else if (sortBy.equals("muscles")) {
 			page = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy).descending());
-		else {
-			// TODO: Sort by friends
+			posts = postService.getPosts(false, decodedJWT.getSubject(), page);
+		} else {
 			page = PageRequest.of(pageNumber, pageSize);
+			posts = postService.getPosts(true, decodedJWT.getSubject(), page);
 		}
-		Page<PostDTO> posts = postService.getPosts(decodedJWT.getSubject(), page);
 		response.setStatus(HttpStatus.OK.value());
 		response.getWriter().write(new ObjectMapper().writeValueAsString(posts));
 	}
