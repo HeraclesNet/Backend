@@ -9,10 +9,12 @@ import com.heracles.net.model.User;
 import com.heracles.net.repository.RutinasRepository;
 import com.heracles.net.repository.UserRepository;
 import com.heracles.net.util.RutinaDTO;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class RutinasService implements RutinasInterfaceService{
     private RutinasRepository rutinasRepository;
@@ -39,7 +41,8 @@ public class RutinasService implements RutinasInterfaceService{
         for(int i = 0;i<listaRutinasDTO.size();i++){
             listaRutinas.add(new Rutinas(userid,listaRutinasDTO.get(i)));
         }
-        rutinasRepository.saveAll(listaRutinas);
+        log.info("-----------> {}",listaRutinas.get(0).getDayOfWeek());
+        rutinasRepository.save(listaRutinas.get(0));
     }
 
     @Override

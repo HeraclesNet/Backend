@@ -18,9 +18,9 @@ public class Rutinas {
     @Id
     @Column(name = "id", unique = true, nullable = false)
     private String id;
-    @Column(name = "userId", nullable = false)
+    @Column(name = "user_id", nullable = false)
     private String userId;
-    @Column(name = "dayOfWeek")
+    @Column(name = "day_of_week",nullable = false)
     private int dayOfWeek;
     @Column(name = "hour")
     private String hour;
