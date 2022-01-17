@@ -17,8 +17,6 @@ public interface PostRepository extends JpaRepository<AppPost, String> {
     @Query(value = "select * from posts where posts.user_id = ?1", nativeQuery = true)
     public List<AppPost> findUserPost(String userID);
 
-
-	
 	public Page<AppPost> findAllByUserId(String userId, Pageable pageable);
 
 }

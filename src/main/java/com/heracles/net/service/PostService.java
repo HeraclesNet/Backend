@@ -61,7 +61,6 @@ public class PostService implements PostServiceInterface {
 		}).collect(Collectors.toList());
 		return new PageImpl<>(getPosts);
 	}
-
 	
 	public void upDateMuscle(String postId, int muscle) {
 		log.info("Update muscle of post {}", postId);
