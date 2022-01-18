@@ -16,10 +16,13 @@ public interface UserRepository extends JpaRepository<User, String> {
     @Query(value = "SELECT * FROM users WHERE id IN (SELECT follower_id FROM followers WHERE user_id = ?1)",
        countQuery = "SELECT COUNT(*) FROM followers WHERE user_id = ?1",  
         nativeQuery = true)
-    Page<User> findAllFollowing(String userId, Pageable pageable);
+    public Page<User> findAllFollowing(String userId, Pageable pageable);
 
-    Optional<User> findUserByEmail(String email);
+    public Optional<User> findUserByEmail(String email);
 
-    Optional<User> findUserByNickName(String nickName);
+    public Optional<User> findUserByNickName(String nickName);
+
+    @Query(value = "call delete_user(?1)", nativeQuery = true)
+    public void deleteAccount(String userId);
     
 }

@@ -156,4 +156,11 @@ public class UserService implements UserDetailsService, UserInterfaceService {
             throw new Exception("User no followed");
         }
     }
+
+    @Override
+    public void deleteAccount(String email) {
+        log.info("Deleting account and information of {}", email);
+        User user = userRepository.findUserByEmail(email).orElseThrow();
+        userRepository.deleteAccount(user.getId());
+    }
 }

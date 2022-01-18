@@ -33,4 +33,6 @@ public interface UserInterfaceService {
 	public ResponseMessage addPost(String email, String content, MultipartFile file) throws UsernameNotFoundException, IOException;
 
 	public UserDTO getUserDTO(String email);
+
+	public void deleteAccount(String email);
 }

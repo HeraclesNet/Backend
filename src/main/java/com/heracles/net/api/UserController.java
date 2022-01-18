@@ -180,4 +180,32 @@ public class UserController {
         }
     }
 
+    @DeleteMapping(value = "/delete/account")
+    public void deleteAccount(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        log.info("Deleting account");
+        String token = request.getHeader(AUTHORIZATION);
+        response.setContentType(APPLICATION_JSON_VALUE);
+        if (token == null) {
+            response.setStatus(FORBIDDEN.value());
+            response.getWriter().write(new ObjectMapper().writeValueAsString(new ResponseMessage(NO_TOKEN_PROVIDED)));
+            return;
+        }
+        DecodedJWT decodedJWT = verifier(token.substring(7));
+        if (decodedJWT == null) {
+            response.setStatus(EXPECTATION_FAILED.value());
+            response.getWriter().write(new ObjectMapper().writeValueAsString(new ResponseMessage(INVALID_TOKEN)));
+            return;
+        }
+        String email = decodedJWT.getSubject();
+        try {
+            userService.deleteAccount(email);
+            response.setStatus(HttpStatus.OK.value());
+            response.getWriter().write(new ObjectMapper().writeValueAsString(new ResponseMessage("Account deleted")));
+        } catch (Exception e) {
+            log.error("Error deleting account {}", e.getMessage());
+            response.setStatus(GATEWAY_TIMEOUT.value());
+            response.getWriter().write(new ObjectMapper().writeValueAsString(new ResponseMessage(e.getMessage())));
+        }
+    }
+
 }
