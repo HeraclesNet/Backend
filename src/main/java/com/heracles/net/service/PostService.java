@@ -84,5 +84,4 @@ public class PostService implements PostServiceInterface {
 		}
 	}
 
-
 }

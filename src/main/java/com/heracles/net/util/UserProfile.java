@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 public class UserProfile {
 
     private UserDTO user;
-    private Page<PostDTO> posts;
-      
+    private Page<PostDTO> posts;   
     
 }

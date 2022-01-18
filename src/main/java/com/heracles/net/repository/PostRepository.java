@@ -9,9 +9,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-
-
-
 public interface PostRepository extends JpaRepository<AppPost, String> {
 
     @Query(value = "select * from posts where posts.user_id = ?1", nativeQuery = true)
