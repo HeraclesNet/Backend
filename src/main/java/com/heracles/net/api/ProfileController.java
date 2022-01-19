@@ -17,6 +17,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.heracles.net.message.ResponseMessage;
 import com.heracles.net.service.PostService;
 import com.heracles.net.service.UserService;
+import com.heracles.net.util.UserDTO;
 import com.heracles.net.util.UserProfile;
 import static com.heracles.net.util.JwtUtil.verifier;
 
@@ -57,11 +58,17 @@ public class ProfileController {
             response.getWriter().write(new ObjectMapper().writeValueAsString(new ResponseMessage(INVALID_TOKEN)));
             return;
         }
-        String email = decodedJWT.getSubject();
+        
+        String NickName = request.getParameter("nickName");
 
-        UserProfile userProfile = new UserProfile(userService.getUserDTO(email), postService.getUserPost(email));
-        log.info(userProfile.toString());
+        UserDTO other = userService.getUserDTO(NickName);
+
+        log.info(other.toString());
         response.setStatus(HttpStatus.OK.value());
-        response.getWriter().write(new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(userProfile));
+        response.getWriter().write(new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(other));
     }
+  
+    
 }
+
+

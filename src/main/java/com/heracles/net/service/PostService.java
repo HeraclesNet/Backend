@@ -59,14 +59,20 @@ public class PostService implements PostServiceInterface {
 	}
 
 	@Override
-	public Page<PostDTO> getUserPost(String email) {
-		User user = userRepository.findUserByEmail(email).orElseThrow();
+	public List<PostDTO> getUserPost(String otherUser, boolean isEmail) {
+		User user;
+		if(isEmail){
+			user = userRepository.findUserByEmail(otherUser).orElseThrow();
+		}else{
+			user = userRepository.findUserByNickName(otherUser).orElseThrow();
+		}
 		List<PostDTO> getPosts = postRepository.findUserPost(user.getId()).stream().map(post -> {
 			List<FileDB> files = fileDBRepository.findByPost(post);
 			return new PostDTO(post, files,false);
 		}).collect(Collectors.toList());
-		return new PageImpl<>(getPosts);
+		return getPosts;
 	}
+	
 	
 	public void upDateMuscle(String postId, int muscle) {
 		log.info("Update muscle of post {}", postId);

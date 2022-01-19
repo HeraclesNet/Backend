@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.heracles.net.message.ResponseMessage;
 import com.heracles.net.service.PostService;
@@ -33,6 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.support.StandardMultipartHttpServletRequest;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -148,4 +150,43 @@ public class PostController {
             response.getWriter().write(new ObjectMapper().writeValueAsString(new ResponseMessage(e.getMessage())));
         }
     }
+
+	@GetMapping(value = "/user")
+	public void returnPost(HttpServletRequest request, HttpServletResponse response) throws JsonProcessingException, IOException{
+		response.setContentType(APPLICATION_JSON_VALUE);
+        String token = request.getHeader(AUTHORIZATION);
+        if (token == null) {
+            response.setStatus(FORBIDDEN.value());
+            response.getWriter().write(new ObjectMapper().writeValueAsString(new ResponseMessage(NO_TOKEN_PROVIDED)));
+            return;
+        }
+        DecodedJWT decodedJWT = verifier(token.substring(7));
+        if (decodedJWT == null) {
+            response.setStatus(EXPECTATION_FAILED.value());
+            response.getWriter().write(new ObjectMapper().writeValueAsString(new ResponseMessage(INVALID_TOKEN)));
+            return;
+        }
+        String email = decodedJWT.getSubject();
+
+		String nickName = request.getParameter("nickName"); 		
+		List<PostDTO> postOther;
+
+		try {
+			if(nickName == null){
+				postOther = postService.getUserPost(email, true);
+			}else{
+				postOther = postService.getUserPost(nickName, false);
+			}
+			log.info(nickName);
+			response.setStatus(HttpStatus.OK.value());
+			response.getWriter().write(new ObjectMapper().writeValueAsString(postOther));
+		
+		} catch (Exception e) {
+			log.error("Error getting post {}", e.getMessage());
+            response.setStatus(EXPECTATION_FAILED.value());
+            response.getWriter().write(new ObjectMapper().writeValueAsString(new ResponseMessage(e.getMessage())));
+		}	
+
+
+	}
 }

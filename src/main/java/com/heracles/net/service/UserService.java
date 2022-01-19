@@ -142,8 +142,8 @@ public class UserService implements UserDetailsService, UserInterfaceService {
     }
 
     @Override
-    public UserDTO getUserDTO(String email) {
-        User user = userRepository.findUserByEmail(email).orElseThrow();
+    public UserDTO getUserDTO(String nickName) {
+        User user = userRepository.findUserByNickName(nickName).orElseThrow();
         return new UserDTO(user);
     }
 
