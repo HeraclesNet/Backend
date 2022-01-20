@@ -6,6 +6,7 @@ import java.util.List;
 import com.heracles.net.message.ResponseMessage;
 import com.heracles.net.model.User;
 import com.heracles.net.util.UserDTO;
+import com.heracles.net.util.UserUpdateDTO;
 
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -23,7 +24,7 @@ public interface UserInterfaceService {
 
 	public User findUserByEmail(String email) throws UsernameNotFoundException;
 
-	public void EditUserExtraData(String email,String key,String value) throws Exception;
+	public void EditUserExtraData(String email,UserUpdateDTO userUpdateDTO) throws Exception;
 
 	public void EditUserImportantData() throws Exception;
 

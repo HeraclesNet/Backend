@@ -7,6 +7,6 @@ public interface RutinasInterfaceService {
 
     public List<RutinaDTO> findAllUserRutinas(String email);
     public void addNewRutinasToUser(String email,List<RutinaDTO> listaRutinas);
-    public void updateRutinasToUser(String email,List<Rutinas> listaRutinas);
+    public void updateRutinasToUser(String email,List<RutinaDTO> listaRutinas);
     
 }

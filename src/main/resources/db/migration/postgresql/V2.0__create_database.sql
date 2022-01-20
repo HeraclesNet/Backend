@@ -64,9 +64,11 @@ CREATE TABLE "public"."followers" (
 CREATE TABLE "public"."rutinas"  (
 	"id" character varying(255) NOT NULL DEFAULT uuid_generate_v4()::text,
 	"user_id" character varying(255) NOT NULL,
-	"day_of_week" INTEGER  NOT NULL,
-	"hour" character varying(255),
+	"start" character varying(255) NOT NULL,
+	"end_t" character varying(255) NOT NULL,
 	"text" TEXT,
+	"back_color" character varying(255),
+	"border_color" character varying(255),
 	CONSTRAINT "idPK" PRIMARY KEY ("id"),
 	CONSTRAINT "fk_user_id" FOREIGN KEY ("user_id") REFERENCES "users" ("id")
 );

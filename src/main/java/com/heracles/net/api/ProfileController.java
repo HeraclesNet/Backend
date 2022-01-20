@@ -9,12 +9,15 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.text.ParseException;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -22,8 +25,9 @@ import com.heracles.net.message.ResponseMessage;
 import com.heracles.net.service.PostService;
 import com.heracles.net.service.RutinasService;
 import com.heracles.net.service.UserService;
-import com.heracles.net.util.ListRutinaDTO;
+import com.heracles.net.util.RutinaDTO;
 import com.heracles.net.util.UserProfile;
+import com.heracles.net.util.UserUpdateDTO;
 
 import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.http.HttpStatus;
@@ -74,9 +78,8 @@ public class ProfileController {
         response.getWriter().write(new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(userProfile));
     }
 
-    @PostMapping(value="/add/rutina")
-    public void AddRutina(HttpServletRequest request, HttpServletResponse response) throws IOException, org.apache.tomcat.util.json.ParseException{
-        log.info("------------------------------------------------");
+    @GetMapping(value="/get/rutina")
+    public void getRutinas(HttpServletRequest request, HttpServletResponse response) throws IOException, org.apache.tomcat.util.json.ParseException{
         ObjectMapper mapper = new ObjectMapper();
         response.setContentType(APPLICATION_JSON_VALUE);
         String token = request.getHeader(AUTHORIZATION);
@@ -91,21 +94,83 @@ public class ProfileController {
             response.getWriter().write(new ObjectMapper().writeValueAsString(new ResponseMessage(INVALID_TOKEN)));
             return;
         }
-        JSONPObject reqJson;
-        try{
-            Reader reqReader = request.getReader();
-            JSONParser parser = new JSONParser(reqReader);
-            reqJson = (JSONPObject) parser.parse();
-            log.info("------------> {}",reqJson.toString());
-        }catch(Exception e){
-            log.info("pos si hubo un herror {}",e.getMessage());
+        String email = decodedJWT.getSubject();
+        try {
+            log.info("Getting fans for user {}", email);
+            response.setStatus(HttpStatus.OK.value());
+            response.getWriter().write(new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(rutinasService.findAllUserRutinas(email)));
+        } catch (Exception e) {
+            log.error("Error getting fans {}", e.getMessage());
+            response.setStatus(EXPECTATION_FAILED.value());
+            response.getWriter().write(new ObjectMapper().writeValueAsString(new ResponseMessage(e.getMessage())));
+        }
+    }
+
+    @PostMapping(value="/add/rutina")
+    public void AddRutina(HttpServletRequest request, HttpServletResponse response) throws IOException, org.apache.tomcat.util.json.ParseException{
+        ObjectMapper mapper = new ObjectMapper();
+        response.setContentType(APPLICATION_JSON_VALUE);
+        String token = request.getHeader(AUTHORIZATION);
+        if (token == null) {
+            response.setStatus(FORBIDDEN.value());
+            response.getWriter().write(new ObjectMapper().writeValueAsString(new ResponseMessage(NO_TOKEN_PROVIDED)));
+            return;
+        }
+        DecodedJWT decodedJWT = verifier(token.substring(7));
+        if (decodedJWT == null) {
+            response.setStatus(EXPECTATION_FAILED.value());
+            response.getWriter().write(new ObjectMapper().writeValueAsString(new ResponseMessage(INVALID_TOKEN)));
+            return;
         }
         String email = decodedJWT.getSubject();
-        ListRutinaDTO rutinas;
-        
-        //rutinas = mapper.readValues(request.getInputStream().toString(),ListRutinaDTO rutinas);
-
-        //rutinas.add(mapper.readValue(,RutinaDTO.class));
-        //rutinasService.addNewRutinasToUser(email,rutinas);
+        List<RutinaDTO> rutinasDTO = mapper.readValue(request.getInputStream(),new TypeReference<List<RutinaDTO>>(){});
+        log.info("-------> {}",rutinasDTO.size());
+        rutinasService.addNewRutinasToUser(email,rutinasDTO);
     }
+
+    @PostMapping(path = "/update/user")
+    public void UpdateUser(HttpServletRequest request, HttpServletResponse response) throws Exception{
+        ObjectMapper mapper = new ObjectMapper();
+        response.setContentType(APPLICATION_JSON_VALUE);
+        String token = request.getHeader(AUTHORIZATION);
+        if (token == null) {
+            response.setStatus(FORBIDDEN.value());
+            response.getWriter().write(new ObjectMapper().writeValueAsString(new ResponseMessage(NO_TOKEN_PROVIDED)));
+            return;
+        }
+        DecodedJWT decodedJWT = verifier(token.substring(7));
+        if (decodedJWT == null) {
+            response.setStatus(EXPECTATION_FAILED.value());
+            response.getWriter().write(new ObjectMapper().writeValueAsString(new ResponseMessage(INVALID_TOKEN)));
+            return;
+        }
+        String email = decodedJWT.getSubject();
+        log.info("----------------------------------------------------------------------");
+        UserUpdateDTO userUpdateDTO = mapper.readValue(request.getInputStream(),UserUpdateDTO.class);
+        log.info("--------> {}",email);
+        userService.EditUserExtraData(email,userUpdateDTO);
+    }
+
+    @PostMapping(path = "/update/rutinas")
+    public void UpdateRutinas(HttpServletRequest request, HttpServletResponse response) throws Exception{
+        ObjectMapper mapper = new ObjectMapper();
+        response.setContentType(APPLICATION_JSON_VALUE);
+        String token = request.getHeader(AUTHORIZATION);
+        if (token == null) {
+            response.setStatus(FORBIDDEN.value());
+            response.getWriter().write(new ObjectMapper().writeValueAsString(new ResponseMessage(NO_TOKEN_PROVIDED)));
+            return;
+        }
+        DecodedJWT decodedJWT = verifier(token.substring(7));
+        if (decodedJWT == null) {
+            response.setStatus(EXPECTATION_FAILED.value());
+            response.getWriter().write(new ObjectMapper().writeValueAsString(new ResponseMessage(INVALID_TOKEN)));
+            return;
+        }
+        String email = decodedJWT.getSubject();
+        List<RutinaDTO> rutinasDTO = mapper.readValue(request.getInputStream(),new TypeReference<List<RutinaDTO>>(){});
+        rutinasService.updateRutinasToUser(email,rutinasDTO);
+    }
+
+    
 }

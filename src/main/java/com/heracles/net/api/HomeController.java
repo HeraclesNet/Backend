@@ -57,16 +57,7 @@ public class HomeController {
         return ResponseEntity.created(uri).body("El usuario a sido agregado");
     }
 
-    @PostMapping(path = "/update")
-    public ResponseEntity<String> UpdateUser(@RequestBody UserUpdateDTO user) {
-        log.info("Update user requested");
-        try{
-            userService.EditUserExtraData(user.getEmail(), user.getKey(), user.getValue());
-        } catch(Exception e){
-            return ResponseEntity.badRequest().body("Los datos no se pudieron alterar");
-        }
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body("Alteraditos");
-    }
+
   
     @GetMapping(value = "/files", produces = "image/*")
     public void getFile(HttpServletRequest request, HttpServletResponse response) throws IOException {

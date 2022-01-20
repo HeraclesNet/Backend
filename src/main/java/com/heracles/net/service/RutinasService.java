@@ -41,13 +41,18 @@ public class RutinasService implements RutinasInterfaceService{
         for(int i = 0;i<listaRutinasDTO.size();i++){
             listaRutinas.add(new Rutinas(userid,listaRutinasDTO.get(i)));
         }
-        log.info("-----------> {}",listaRutinas.get(0).getDayOfWeek());
-        rutinasRepository.save(listaRutinas.get(0));
+        rutinasRepository.saveAll(listaRutinas);
     }
 
     @Override
-    public void updateRutinasToUser(String email, List<Rutinas> listaRutinas) {
-        // TODO Auto-generated method stub
-        
+
+    public void updateRutinasToUser(String email, List<RutinaDTO> listaRutinasDTO) {
+        User usuario = userRepository.findUserByEmail(email).orElseThrow();
+        String userid = usuario.getId();
+        List<Rutinas> listaRutinas = new ArrayList<Rutinas>();
+        for(int i = 0;i<listaRutinasDTO.size();i++){
+            listaRutinas.add(new Rutinas(listaRutinasDTO.get(i).getId(),userid,listaRutinasDTO.get(i)));
+        }
+        rutinasRepository.saveAll(listaRutinas);
     }
 }

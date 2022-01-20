@@ -9,6 +9,7 @@ import com.heracles.net.model.*;
 import com.heracles.net.repository.*;
 import com.heracles.net.util.CustomUserDetails;
 import com.heracles.net.util.UserDTO;
+import com.heracles.net.util.UserUpdateDTO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -82,17 +83,12 @@ public class UserService implements UserDetailsService, UserInterfaceService {
     }
 
     @Override
-    public void EditUserExtraData(String email, String key, String value) throws Exception {
+    public void EditUserExtraData(String email,UserUpdateDTO userUpdateDTO) throws Exception {
         User user = userRepository.findUserByEmail(email).orElseThrow();
-        if (key.equals("Height")) {
-            user.setHeight(Float.parseFloat(value));
-        }
-        if (key.equals("Weight")) {
-            user.setWeight(Float.parseFloat(value));
-        }
-        if (key.equals("Gender")) {
-            user.setGender(Boolean.parseBoolean(value));
-        }
+        user.setHeight(userUpdateDTO.getHeight());
+        user.setWeight(userUpdateDTO.getWeight());
+        user.setGender(userUpdateDTO.isGender());
+        user.setVisibility(userUpdateDTO.isVisibility());
         userRepository.save(user);
     }
 

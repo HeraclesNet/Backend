@@ -20,33 +20,39 @@ public class Rutinas {
     private String id;
     @Column(name = "user_id", nullable = false)
     private String userId;
-    @Column(name = "day_of_week",nullable = false)
-    private int dayOfWeek;
-    @Column(name = "hour")
-    private String hour;
+    @Column(name = "start", nullable = false)
+    private String start;
+    @Column(name = "end_t", nullable = false)
+    private String end_t;
     @Column(name = "text")
     private String text;
+    @Column(name = "back_color")
+    private String back_color;
+    @Column(name = "border_color")
+    private String border_color;
 
     public Rutinas() {
     }
 
-    public Rutinas(String userId, int dayOfWeek, String hour, String text) {
-        this.id = UUID.randomUUID().toString();
-        this.userId = userId;
-        this.dayOfWeek = dayOfWeek;
-        this.hour = hour;
-        this.text = text;
-    }
 
     public Rutinas(String userId, RutinaDTO rutinaDTO) {
         this.id = UUID.randomUUID().toString();
         this.userId = userId;
-        this.dayOfWeek = rutinaDTO.getDayOfWeek();
-        this.hour = rutinaDTO.getHour();
+        this.start = rutinaDTO.getStart();
+        this.end_t = rutinaDTO.getEnd_t();
         this.text = rutinaDTO.getText();
+        this.back_color = rutinaDTO.getBack_color();
+        this.border_color = rutinaDTO.getBorder_color();
     }
 
-
-    
+    public Rutinas(String id,String userId, RutinaDTO rutinaDTO) {
+        this.id = id;
+        this.userId = userId;
+        this.start = rutinaDTO.getStart();
+        this.end_t = rutinaDTO.getEnd_t();
+        this.text = rutinaDTO.getText();
+        this.back_color = rutinaDTO.getBack_color();
+        this.border_color = rutinaDTO.getBorder_color();
+    }
 
 }
