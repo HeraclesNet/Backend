@@ -19,9 +19,6 @@ import com.heracles.net.model.User;
 import com.heracles.net.service.FileStorageService;
 import com.heracles.net.service.UserService;
 import com.heracles.net.util.UserRegisterDTO;
-import com.heracles.net.util.UserUpdateDTO;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -73,16 +70,7 @@ public class HomeController {
         
     }
 
-    @PostMapping(path = "/update")
-    public ResponseEntity<String> UpdateUser(@RequestBody UserUpdateDTO user) {
-        log.info("Update user requested");
-        try{
-            userService.EditUserExtraData(user.getEmail(), user.getKey(), user.getValue());
-        } catch(Exception e){
-            return ResponseEntity.badRequest().body("Los datos no se pudieron alterar");
-        }
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body("Alteraditos");
-    }
+
   
     @GetMapping(value = "/files", produces = "image/*")
     public void getFile(HttpServletRequest request, HttpServletResponse response) throws IOException {
