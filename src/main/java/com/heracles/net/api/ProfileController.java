@@ -23,6 +23,7 @@ import com.heracles.net.service.PostService;
 import com.heracles.net.service.RutinasService;
 import com.heracles.net.service.UserService;
 import com.heracles.net.util.RutinaDTO;
+import com.heracles.net.util.UserDTO;
 import com.heracles.net.util.UserProfile;
 import com.heracles.net.util.UserUpdateDTO;
 
@@ -46,7 +47,6 @@ import lombok.extern.slf4j.Slf4j;
 public class ProfileController {
 
     private final UserService userService;
-    private final PostService postService;
     private final RutinasService rutinasService;
     private static final String INVALID_TOKEN = "Invalid token";
     private static final String NO_TOKEN_PROVIDED = "No token provided"; 
