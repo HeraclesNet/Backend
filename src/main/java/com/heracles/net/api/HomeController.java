@@ -13,8 +13,6 @@ import com.heracles.net.model.User;
 import com.heracles.net.service.FileStorageService;
 import com.heracles.net.service.UserService;
 import com.heracles.net.util.UserRegisterDTO;
-import com.heracles.net.util.UserUpdateDTO;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;

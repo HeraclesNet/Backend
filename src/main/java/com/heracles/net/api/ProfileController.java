@@ -6,11 +6,8 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.Reader;
-import java.text.ParseException;
+
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,7 +16,7 @@ import javax.transaction.Transactional;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.util.JSONPObject;
+
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.heracles.net.message.ResponseMessage;
 import com.heracles.net.service.PostService;
@@ -29,7 +26,6 @@ import com.heracles.net.util.RutinaDTO;
 import com.heracles.net.util.UserProfile;
 import com.heracles.net.util.UserUpdateDTO;
 
-import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -80,7 +76,6 @@ public class ProfileController {
 
     @GetMapping(value="/get/rutina")
     public void getRutinas(HttpServletRequest request, HttpServletResponse response) throws IOException, org.apache.tomcat.util.json.ParseException{
-        ObjectMapper mapper = new ObjectMapper();
         response.setContentType(APPLICATION_JSON_VALUE);
         String token = request.getHeader(AUTHORIZATION);
         if (token == null) {
@@ -171,6 +166,4 @@ public class ProfileController {
         List<RutinaDTO> rutinasDTO = mapper.readValue(request.getInputStream(),new TypeReference<List<RutinaDTO>>(){});
         rutinasService.updateRutinasToUser(email,rutinasDTO);
     }
-
-    
 }

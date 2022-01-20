@@ -1,6 +1,5 @@
 package com.heracles.net.service;
 import java.util.List;
-import com.heracles.net.model.Rutinas;
 import com.heracles.net.util.RutinaDTO;
 
 public interface RutinasInterfaceService {
