@@ -44,10 +44,11 @@ public class Rutinas {
     public Rutinas(String id,String userId, RutinaDTO rutinaDTO) {
         this.id = id;
         this.userId = userId;
+
         this.start_t = rutinaDTO.getStart_t();
         this.end_t = rutinaDTO.getEnd_t();
         this.text = rutinaDTO.getText();
-        this.start_t = rutinaDTO.getStart_t();
+        this.date = rutinaDTO.getDate();
     }
 
 }

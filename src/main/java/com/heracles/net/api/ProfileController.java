@@ -19,12 +19,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.heracles.net.message.ResponseMessage;
-import com.heracles.net.service.PostService;
 import com.heracles.net.service.RutinasService;
 import com.heracles.net.service.UserService;
 import com.heracles.net.util.RutinaDTO;
 import com.heracles.net.util.UserDTO;
-import com.heracles.net.util.UserProfile;
 import com.heracles.net.util.UserUpdateDTO;
 
 import org.springframework.http.HttpStatus;
@@ -169,5 +167,3 @@ public class ProfileController {
         rutinasService.updateRutinasToUser(email,rutinasDTO);
     }
 }
-
-

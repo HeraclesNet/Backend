@@ -1,6 +1,6 @@
 package com.heracles.net.model;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import javax.persistence.Column;
@@ -35,13 +35,13 @@ public class AppPost {
 	private User user;
 
 	@Column(name = "created_at", columnDefinition = "TIMESTAMP")
-	private LocalDate createdAt;
+	private LocalDateTime createdAt;
 
 
 	public AppPost(String content, User user) {
 		this.id = UUID.randomUUID().toString();
 		this.content = content;
 		this.user = user;
-		this.createdAt = LocalDate.now();
+		this.createdAt = LocalDateTime.now();
 	}
 }
