@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.heracles.net.message.ResponseMessage;
 import com.heracles.net.service.PostService;
@@ -141,7 +140,7 @@ public class PostController {
             log.info("updating post for user {}", email);
             String postId = request.getParameter("postId");
             int muscle = Integer.parseInt(request.getParameter("muscle"));
-            postService.upDateMuscle(postId, muscle);
+            postService.upDateMuscle(postId, muscle, email);
             response.setStatus(HttpStatus.OK.value());
             response.getWriter().write(new ObjectMapper().writeValueAsString(new ResponseMessage("Muscle updated")));
         } catch (Exception e) {
@@ -152,7 +151,7 @@ public class PostController {
     }
 
 	@GetMapping(value = "/user")
-	public void returnPost(HttpServletRequest request, HttpServletResponse response) throws JsonProcessingException, IOException{
+	public void returnPost(HttpServletRequest request, HttpServletResponse response) throws IOException{
 		response.setContentType(APPLICATION_JSON_VALUE);
         String token = request.getHeader(AUTHORIZATION);
         if (token == null) {

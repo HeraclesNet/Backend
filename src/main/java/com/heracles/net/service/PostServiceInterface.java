@@ -13,6 +13,6 @@ public interface PostServiceInterface {
 	
 	public List<PostDTO> getUserPost(String userID, boolean isEmail);
 	
-	public void upDateMuscle(String postId, int muscle);
+	public void upDateMuscle(String postId, int muscle, String email);
 
 }

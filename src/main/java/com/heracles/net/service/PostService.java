@@ -47,7 +47,7 @@ public class PostService implements PostServiceInterface {
 		if (isFriend) {
 			findAll = postRepository.findFriendsPost(user.getId(), pageable).getContent();
 		} else {
-			findAll = postRepository.findAll(pageable).getContent();
+			findAll = postRepository.findAllUserVisibility(pageable).getContent();
 		}
 		postRepository.findAll(pageable).getContent();
 		List<PostDTO> collect = findAll.stream().map(post -> {
@@ -55,7 +55,7 @@ public class PostService implements PostServiceInterface {
 			Optional<PostMuscle> postMuscle = musclesRepository.findByUserIdAndPostId(user.getId(), post.getId());
 			return new PostDTO(post, files, postMuscle.isPresent());
 		}).collect(Collectors.toList());
-		return new PageImpl<>(collect);
+		return new PageImpl<>(collect, pageable, findAll.size());
 	}
 
 	@Override
@@ -66,19 +66,18 @@ public class PostService implements PostServiceInterface {
 		}else{
 			user = userRepository.findUserByNickName(otherUser).orElseThrow();
 		}
-		List<PostDTO> getPosts = postRepository.findUserPost(user.getId()).stream().map(post -> {
+		return postRepository.findUserPost(user.getId()).stream().map(post -> {
 			List<FileDB> files = fileDBRepository.findByPost(post);
 			return new PostDTO(post, files,false);
 		}).collect(Collectors.toList());
-		return getPosts;
 	}
 	
 	
-	public void upDateMuscle(String postId, int muscle) {
+	public void upDateMuscle(String postId, int muscle, String email) {
 		log.info("Update muscle of post {}", postId);
 		Optional<AppPost> findById = postRepository.findById(postId);
 		AppPost post = findById.orElseThrow();
-		User user = post.getUser();
+		User user = userRepository.findUserByEmail(email).orElseThrow();
 		post.setMuscles(post.getMuscles() + muscle);
 		postRepository.save(post);
 		if (muscle > 0) {

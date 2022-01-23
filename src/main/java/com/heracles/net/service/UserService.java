@@ -134,7 +134,7 @@ public class UserService implements UserDetailsService, UserInterfaceService {
         Page<User> fans = userRepository.findAllFollowing(user.getId(), pageable);
         List<UserDTO> fansDTO = new ArrayList<>();
         fans.stream().forEach(f -> fansDTO.add(new UserDTO(f)));
-        return new PageImpl<>(fansDTO);
+        return new PageImpl<>(fansDTO, pageable, fans.getTotalElements());
     }
 
     @Override

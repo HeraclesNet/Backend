@@ -19,4 +19,7 @@ public interface PostRepository extends JpaRepository<AppPost, String> {
     @Query(value = "select * from posts where user_id in (select follower_id from followers where user_id = ?1)", nativeQuery = true)
     public Page<AppPost> findFriendsPost(String userId, Pageable pageable);
 
+    @Query(value = "select * from posts where user_id in (select id from users where visibility = TRUE)", nativeQuery = true)
+    public Page<AppPost> findAllUserVisibility(Pageable pageable);
+
 }
