@@ -75,10 +75,10 @@ public class PostController {
 		Pageable page;
 		Page<PostDTO> posts;
 		if (sortBy.equals("createdAt")) {
-			page = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy).ascending());
+			page = PageRequest.of(pageNumber, pageSize, Sort.by("created_at").descending());
 			posts = postService.getPosts(false, decodedJWT.getSubject(), page);
 		} else if (sortBy.equals("muscles")) {
-			page = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy).descending());
+			page = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy).ascending());
 			posts = postService.getPosts(false, decodedJWT.getSubject(), page);
 		} else {
 			page = PageRequest.of(pageNumber, pageSize);
@@ -169,7 +169,6 @@ public class PostController {
 
 		String nickName = request.getParameter("nickName"); 		
 		List<PostDTO> postOther;
-
 		try {
 			if(nickName == null){
 				postOther = postService.getUserPost(email, true);

@@ -49,7 +49,6 @@ public class PostService implements PostServiceInterface {
 		} else {
 			findAll = postRepository.findAllUserVisibility(pageable).getContent();
 		}
-		postRepository.findAll(pageable).getContent();
 		List<PostDTO> collect = findAll.stream().map(post -> {
 			List<FileDB> files = fileDBRepository.findByPost(post);
 			Optional<PostMuscle> postMuscle = musclesRepository.findByUserIdAndPostId(user.getId(), post.getId());
@@ -68,7 +67,8 @@ public class PostService implements PostServiceInterface {
 		}
 		return postRepository.findUserPost(user.getId()).stream().map(post -> {
 			List<FileDB> files = fileDBRepository.findByPost(post);
-			return new PostDTO(post, files,false);
+			Optional<PostMuscle> postMuscle = musclesRepository.findByUserIdAndPostId(user.getId(), post.getId());
+			return new PostDTO(post, files, postMuscle.isPresent());
 		}).collect(Collectors.toList());
 	}
 	

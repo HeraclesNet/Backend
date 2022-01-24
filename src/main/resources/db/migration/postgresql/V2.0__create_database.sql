@@ -3,6 +3,7 @@ DROP TABLE IF EXISTS "files" CASCADE;
 DROP TABLE IF EXISTS "posts" CASCADE;
 DROP TABLE IF EXISTS "rutinas" CASCADE;
 DROP TABLE IF EXISTS "followers" CASCADE;
+DROP TABLE IF EXISTS "posts_muscles" CASCADE;
 
 -----------------------
 -- Table: users
@@ -65,6 +66,10 @@ CREATE TABLE "public"."followers" (
 	CONSTRAINT "fk_follower_id" FOREIGN KEY ("follower_id") REFERENCES "users" ("id")
 );
 
+-----------------------
+-- Table: rutinas
+-----------------------
+
 CREATE TABLE "public"."rutinas"  (
 	"id" character varying(255) NOT NULL DEFAULT uuid_generate_v4()::text,
 	"date" character varying(255) NOT NULL,
@@ -73,5 +78,18 @@ CREATE TABLE "public"."rutinas"  (
 	"end_t" character varying(255) NOT NULL,
 	"text" TEXT,
 	CONSTRAINT "idPK" PRIMARY KEY ("id"),
+	CONSTRAINT "fk_user_id" FOREIGN KEY ("user_id") REFERENCES "users" ("id")
+);
+
+-----------------------
+-- Table: posts_muscles
+-----------------------
+
+CREATE TABLE "public"."posts_muscles" (
+	"id" character varying(255) NOT NULL DEFAULT uuid_generate_v4()::text,
+	"post_id" character varying(255) NOT NULL,
+	"user_id" character varying(255) NOT NULL,
+	CONSTRAINT "posts_muscles_key" PRIMARY KEY ("id"),
+	CONSTRAINT "fk_post_id" FOREIGN KEY ("post_id") REFERENCES "posts" ("id"),
 	CONSTRAINT "fk_user_id" FOREIGN KEY ("user_id") REFERENCES "users" ("id")
 );
