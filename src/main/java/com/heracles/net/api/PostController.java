@@ -78,7 +78,7 @@ public class PostController {
 			page = PageRequest.of(pageNumber, pageSize, Sort.by("created_at").descending());
 			posts = postService.getPosts(false, decodedJWT.getSubject(), page);
 		} else if (sortBy.equals("muscles")) {
-			page = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy).ascending());
+			page = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy).descending());
 			posts = postService.getPosts(false, decodedJWT.getSubject(), page);
 		} else {
 			page = PageRequest.of(pageNumber, pageSize);
@@ -171,9 +171,9 @@ public class PostController {
 		List<PostDTO> postOther;
 		try {
 			if(nickName == null){
-				postOther = postService.getUserPost(email, true);
+				postOther = postService.getUserPost(email, true, email);
 			}else{
-				postOther = postService.getUserPost(nickName, false);
+				postOther = postService.getUserPost(nickName, false, email);
 			}
 			log.info(nickName);
 			response.setStatus(HttpStatus.OK.value());

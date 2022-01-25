@@ -58,16 +58,17 @@ public class PostService implements PostServiceInterface {
 	}
 
 	@Override
-	public List<PostDTO> getUserPost(String otherUser, boolean isEmail) {
-		User user;
+	public List<PostDTO> getUserPost(String otherUser, boolean isEmail, String email) {
+		User userProfile;
+		User userAsk = userRepository.findUserByEmail(email).orElseThrow();
 		if(isEmail){
-			user = userRepository.findUserByEmail(otherUser).orElseThrow();
+			userProfile = userRepository.findUserByEmail(otherUser).orElseThrow();
 		}else{
-			user = userRepository.findUserByNickName(otherUser).orElseThrow();
+			userProfile = userRepository.findUserByNickName(otherUser).orElseThrow();
 		}
-		return postRepository.findUserPost(user.getId()).stream().map(post -> {
+		return postRepository.findUserPost(userProfile.getId()).stream().map(post -> {
 			List<FileDB> files = fileDBRepository.findByPost(post);
-			Optional<PostMuscle> postMuscle = musclesRepository.findByUserIdAndPostId(user.getId(), post.getId());
+			Optional<PostMuscle> postMuscle = musclesRepository.findByUserIdAndPostId(userAsk.getId(), post.getId());
 			return new PostDTO(post, files, postMuscle.isPresent());
 		}).collect(Collectors.toList());
 	}
