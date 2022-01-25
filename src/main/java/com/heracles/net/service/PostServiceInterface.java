@@ -11,7 +11,7 @@ public interface PostServiceInterface {
 	
 	public Page<PostDTO> getPosts(boolean isFrends, String email, Pageable pageable);
 	
-	public List<PostDTO> getUserPost(String userID, boolean isEmail);
+	public List<PostDTO> getUserPost(String userID, boolean isEmail, String email);
 	
 	public void upDateMuscle(String postId, int muscle, String email);
 
