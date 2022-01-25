@@ -74,8 +74,8 @@ CREATE TABLE "public"."rutinas"  (
 	"id" character varying(255) NOT NULL DEFAULT uuid_generate_v4()::text,
 	"date" character varying(255) NOT NULL,
 	"user_id" character varying(255) NOT NULL,
-	"star_t" character varying(255) NOT NULL,
-	"end_t" character varying(255) NOT NULL,
+	"starT" character varying(255) NOT NULL,
+	"endT" character varying(255) NOT NULL,
 	"text" TEXT,
 	CONSTRAINT "idPK" PRIMARY KEY ("id"),
 	CONSTRAINT "fk_user_id" FOREIGN KEY ("user_id") REFERENCES "users" ("id")
