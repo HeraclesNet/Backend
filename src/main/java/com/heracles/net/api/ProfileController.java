@@ -18,6 +18,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.heracles.net.message.ProfileMessage;
 import com.heracles.net.message.ResponseMessage;
 import com.heracles.net.service.RutinasService;
 import com.heracles.net.service.UserService;
@@ -65,13 +66,13 @@ public class ProfileController {
             return;
         }
         
-        String NickName = request.getParameter("nickName");
-
-        UserDTO other = userService.getUserDTO(NickName);
+        String nickName = request.getParameter("nickName");
+        String email = decodedJWT.getSubject();
+        UserDTO other = userService.getUserDTO(nickName);
 
         log.info(other.toString());
         response.setStatus(HttpStatus.OK.value());
-        response.getWriter().write(new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(other));
+        response.getWriter().write(new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(new ProfileMessage(other, userService.isFollowing(nickName, email))));
     }
 
     @GetMapping(value="/get/rutina")
@@ -119,7 +120,6 @@ public class ProfileController {
         }
         String email = decodedJWT.getSubject();
         List<RutinaDTO> rutinasDTO = mapper.readValue(request.getInputStream(),new TypeReference<List<RutinaDTO>>(){});
-        log.info("-------> {}",rutinasDTO.size());
         rutinasService.addNewRutinasToUser(email,rutinasDTO);
     }
 
@@ -140,9 +140,7 @@ public class ProfileController {
             return;
         }
         String email = decodedJWT.getSubject();
-        log.info("----------------------------------------------------------------------");
         UserUpdateDTO userUpdateDTO = mapper.readValue(request.getInputStream(),UserUpdateDTO.class);
-        log.info("--------> {}",email);
         userService.EditUserExtraData(email,userUpdateDTO);
     }
 

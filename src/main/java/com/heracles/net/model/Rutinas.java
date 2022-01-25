@@ -22,10 +22,10 @@ public class Rutinas {
     private String userId;
     @Column(name = "date")
     private String date;
-    @Column(name = "starT", nullable = false)
-    private String startT;
-    @Column(name = "endT", nullable = false)
-    private String endT;
+    @Column(name = "startt", nullable = false)
+    private String startt;
+    @Column(name = "ent", nullable = false)
+    private String ent;
     @Column(name = "text")
     private String text;
     public Rutinas() {
@@ -35,8 +35,8 @@ public class Rutinas {
     public Rutinas(String userId, RutinaDTO rutinaDTO) {
         this.id = UUID.randomUUID().toString();
         this.userId = userId;
-        this.startT = rutinaDTO.getStartT();
-        this.endT = rutinaDTO.getEndT();
+        this.startt = rutinaDTO.getStartt();
+        this.ent = rutinaDTO.getEnt();
         this.text = rutinaDTO.getText();
         this.date = rutinaDTO.getDate();
     }
@@ -44,9 +44,8 @@ public class Rutinas {
     public Rutinas(String id,String userId, RutinaDTO rutinaDTO) {
         this.id = id;
         this.userId = userId;
-
-        this.startT = rutinaDTO.getStartT();
-        this.endT = rutinaDTO.getEndT();
+        this.startt = rutinaDTO.getStartt();
+        this.ent = rutinaDTO.getEnt();
         this.text = rutinaDTO.getText();
         this.date = rutinaDTO.getDate();
     }

@@ -15,6 +15,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface UserInterfaceService {
 
+	public boolean isFollowing(String nickName, String email);
+
 	public void unFollowUser(String email, String nickName) throws Exception;
 
 	public Page<UserDTO> getFans(String email, Pageable pageable); 

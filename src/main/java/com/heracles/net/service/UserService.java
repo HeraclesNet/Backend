@@ -159,4 +159,12 @@ public class UserService implements UserDetailsService, UserInterfaceService {
         User user = userRepository.findUserByEmail(email).orElseThrow();
         userRepository.deleteAccount(user.getId());
     }
+
+	@Override
+	public boolean isFollowing(String nickName, String email) {
+        User user = userRepository.findUserByEmail(email).orElseThrow();
+        User otherUser = userRepository.findUserByNickName(nickName).orElseThrow();
+		return followerRepository.findByUserIdAndFollowerId(user.getId(), otherUser.getId()).isPresent();
+	}
+
 }

@@ -12,17 +12,25 @@ import lombok.NoArgsConstructor;
 public class RutinaDTO {
     private String id;
     private String date;
-    private String startT;
-    private String endT;
+    private String startt;
+    private String ent;
     private String text;
 
 
 
-    public RutinaDTO(Rutinas rutinas){
+    public RutinaDTO(Rutinas rutinas) {
         this.id = rutinas.getId();
-        this.startT = rutinas.getStartT();
-        this.endT = rutinas.getEndT();
+        this.startt = rutinas.getStartt();
+        this.ent = rutinas.getEnt();
         this.text = rutinas.getText();
         this.date = rutinas.getDate();
+    }
+
+    @Override
+    public String toString() {
+        return "date: " + this.getDate() + "\n" +
+                "ent: " + this.getEnt() + "\n" + 
+                "startt" + this.getStartt() + "\n" +
+                "text: " + this.getText() + "\n";
     }
 }

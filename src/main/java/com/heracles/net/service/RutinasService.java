@@ -12,6 +12,9 @@ import com.heracles.net.util.RutinaDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class RutinasService implements RutinasInterfaceService{
     private RutinasRepository rutinasRepository;
@@ -32,6 +35,7 @@ public class RutinasService implements RutinasInterfaceService{
 
     @Override
     public void addNewRutinasToUser(String email, List<RutinaDTO> listaRutinasDTO) {
+
         User usuario = userRepository.findUserByEmail(email).orElseThrow();
         String userid = usuario.getId();
         List<Rutinas> listaRutinas = new ArrayList<Rutinas>();
