@@ -47,7 +47,8 @@ public class PostService implements PostServiceInterface {
 		if (isFriend) {
 			findAll = postRepository.findFriendsPost(user.getId(), pageable).getContent();
 		} else {
-			findAll = postRepository.findAllUserVisibility(pageable).getContent();
+			findAll = postRepository.findAll(pageable).getContent();
+			//findAll = postRepository.findAllUserVisibility(pageable).getContent();
 		}
 		List<PostDTO> collect = findAll.stream().map(post -> {
 			List<FileDB> files = fileDBRepository.findByPost(post);

@@ -13,5 +13,6 @@ public class ProfileMessage {
 
 	private UserDTO user;
 	private boolean followed;
+	private boolean isPrivate;
 
 }

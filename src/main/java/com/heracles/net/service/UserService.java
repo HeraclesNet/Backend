@@ -161,10 +161,17 @@ public class UserService implements UserDetailsService, UserInterfaceService {
     }
 
 	@Override
-	public boolean isFollowing(String nickName, String email) {
+    public boolean isFollowing(String nickName, String email) {
         User user = userRepository.findUserByEmail(email).orElseThrow();
         User otherUser = userRepository.findUserByNickName(nickName).orElseThrow();
-		return followerRepository.findByUserIdAndFollowerId(user.getId(), otherUser.getId()).isPresent();
+        return followerRepository.findByUserIdAndFollowerId(user.getId(), otherUser.getId()).isPresent();
+    }
+
+	@Override
+	public boolean isPrivateProfile(String nickName) {
+        User user = userRepository.findUserByNickName(nickName).orElseThrow();
+        return !user.isVisibility();
 	}
 
+    
 }

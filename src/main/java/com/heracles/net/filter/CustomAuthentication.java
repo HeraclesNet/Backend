@@ -55,7 +55,7 @@ public class CustomAuthentication extends UsernamePasswordAuthenticationFilter {
 		User user = new User(userDetails.getUsername(), userDetails.getPassword(), userDetails.getAuthorities());
 		String token = generateToken(user, new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 5));
 		String refreshToken = generateToken(user, new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24));
-		AuthMessage authMessage = new AuthMessage(token, refreshToken, new UserDTO(userDetails.getUser()));
+		AuthMessage authMessage = new AuthMessage(token, refreshToken, new UserDTO(userDetails.getUser()), userDetails.getUser().isVisibility());
 		ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());	
 		response.getWriter().write(mapper.writeValueAsString(authMessage));
 	}

@@ -38,4 +38,6 @@ public interface UserInterfaceService {
 	public UserDTO getUserDTO(String email);
 
 	public void deleteAccount(String email);
+
+	public boolean isPrivateProfile(String nisckName);
 }

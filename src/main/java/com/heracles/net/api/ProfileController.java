@@ -72,7 +72,9 @@ public class ProfileController {
 
         log.info(other.toString());
         response.setStatus(HttpStatus.OK.value());
-        response.getWriter().write(new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(new ProfileMessage(other, userService.isFollowing(nickName, email))));
+        response.getWriter().write(new ObjectMapper().registerModule(
+            new JavaTimeModule()).writeValueAsString(
+                new ProfileMessage(other, userService.isFollowing(nickName, email), userService.isPrivateProfile(nickName))));
     }
 
     @GetMapping(value="/get/rutina")

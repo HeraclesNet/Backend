@@ -75,7 +75,7 @@ public class PostController {
 		Pageable page;
 		Page<PostDTO> posts;
 		if (sortBy.equals("createdAt")) {
-			page = PageRequest.of(pageNumber, pageSize, Sort.by("created_at").descending());
+			page = PageRequest.of(pageNumber, pageSize, Sort.by("createdAt").descending());
 			posts = postService.getPosts(false, decodedJWT.getSubject(), page);
 		} else if (sortBy.equals("muscles")) {
 			page = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy).descending());

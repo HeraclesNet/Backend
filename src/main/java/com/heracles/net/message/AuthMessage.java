@@ -8,7 +8,9 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class AuthMessage {
+	
 	private String token;
 	private String refreshToken;
 	private UserDTO user;
+	private boolean visibility;
 }
