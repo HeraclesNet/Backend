@@ -20,6 +20,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.heracles.net.message.ProfileMessage;
 import com.heracles.net.message.ResponseMessage;
+import com.heracles.net.model.User;
+import com.heracles.net.repository.UserRepository;
 import com.heracles.net.service.RutinasService;
 import com.heracles.net.service.UserService;
 import com.heracles.net.util.RutinaDTO;
@@ -95,6 +97,36 @@ public class ProfileController {
         String email = decodedJWT.getSubject();
         try {
             log.info("Getting fans for user {}", email);
+            response.setStatus(HttpStatus.OK.value());
+            response.getWriter().write(new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(rutinasService.findAllUserRutinas(email)));
+        } catch (Exception e) {
+            log.error("Error getting fans {}", e.getMessage());
+            response.setStatus(EXPECTATION_FAILED.value());
+            response.getWriter().write(new ObjectMapper().writeValueAsString(new ResponseMessage(e.getMessage())));
+        }
+    }
+
+    @GetMapping(value="/get/rutina/nickName")
+    public void getRutinasByNickName(HttpServletRequest request, HttpServletResponse response) throws IOException, org.apache.tomcat.util.json.ParseException{
+        response.setContentType(APPLICATION_JSON_VALUE);
+        String token = request.getHeader(AUTHORIZATION);
+        User user;
+        String nickName = request.getParameter("nickName");
+        String email;
+        if (token == null) {
+            response.setStatus(FORBIDDEN.value());
+            response.getWriter().write(new ObjectMapper().writeValueAsString(new ResponseMessage(NO_TOKEN_PROVIDED)));
+            return;
+        }
+        DecodedJWT decodedJWT = verifier(token.substring(7));
+        if (decodedJWT == null) {
+            response.setStatus(EXPECTATION_FAILED.value());
+            response.getWriter().write(new ObjectMapper().writeValueAsString(new ResponseMessage(INVALID_TOKEN)));
+            return;
+        }
+        user = userService.findUserByNickName(nickName);
+        email = user.getEmail();
+        try {
             response.setStatus(HttpStatus.OK.value());
             response.getWriter().write(new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(rutinasService.findAllUserRutinas(email)));
         } catch (Exception e) {

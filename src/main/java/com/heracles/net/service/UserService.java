@@ -84,6 +84,11 @@ public class UserService implements UserDetailsService, UserInterfaceService {
     }
 
     @Override
+    public User findUserByNickName(String nickName) throws UsernameNotFoundException {
+        return userRepository.findUserByNickName(nickName).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    }
+
+    @Override
     public void EditUserExtraData(String email,UserUpdateDTO userUpdateDTO) throws Exception {
         User user = userRepository.findUserByEmail(email).orElseThrow();
         user.setHeight(userUpdateDTO.getHeight());

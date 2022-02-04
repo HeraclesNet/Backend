@@ -28,6 +28,8 @@ public interface UserInterfaceService {
 	public List<User> getUsers();
 
 	public User findUserByEmail(String email) throws UsernameNotFoundException;
+	
+	public User findUserByNickName(String email) throws UsernameNotFoundException;
 
 	public void EditUserExtraData(String email,UserUpdateDTO userUpdateDTO) throws Exception;
 
